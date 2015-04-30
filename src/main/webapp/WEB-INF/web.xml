@@ -10,6 +10,15 @@
       <javaee:role-name>RestClient</javaee:role-name>
     </javaee:auth-constraint>
   </javaee:security-constraint>
+  <javaee:servlet>
+    <javaee:servlet-name>fhir</javaee:servlet-name>
+    <javaee:servlet-class>org.bch.c3pro.server.servlet.FHIRServlet</javaee:servlet-class>
+  </javaee:servlet>
+  <javaee:servlet-mapping>
+    <javaee:servlet-name>fhir</javaee:servlet-name>
+    <javaee:url-pattern>/fhir/*</javaee:url-pattern>
+  </javaee:servlet-mapping>
+
   <javaee:login-config>
     <javaee:auth-method>BASIC</javaee:auth-method>
     <javaee:realm-name>ApplicationRealm</javaee:realm-name>
