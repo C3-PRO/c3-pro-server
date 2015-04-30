@@ -1,11 +1,11 @@
 package org.bch.c3pro.server.iresource;
 
 import ca.uhn.fhir.model.api.ResourceMetadataKeyEnum;
-import ca.uhn.fhir.model.dstu.composite.HumanNameDt;
-import ca.uhn.fhir.model.dstu.resource.OperationOutcome;
-import ca.uhn.fhir.model.dstu.resource.Patient;
-import ca.uhn.fhir.model.dstu.valueset.AdministrativeGenderCodesEnum;
-import ca.uhn.fhir.model.dstu.valueset.IssueSeverityEnum;
+import ca.uhn.fhir.model.dstu2.composite.HumanNameDt;
+import ca.uhn.fhir.model.dstu2.resource.OperationOutcome;
+import ca.uhn.fhir.model.dstu2.resource.Patient;
+import ca.uhn.fhir.model.dstu2.valueset.AdministrativeGenderEnum;
+import ca.uhn.fhir.model.dstu2.valueset.IssueSeverityEnum;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.model.primitive.InstantDt;
 import ca.uhn.fhir.model.primitive.StringDt;
@@ -54,7 +54,7 @@ public class PatientResourceProvider implements IResourceProvider {
         patient.getIdentifier().get(0).setValue("00002");
         patient.addName().addFamily("Griffin");
         patient.getName().get(0).addGiven("Peter");
-        patient.setGender(AdministrativeGenderCodesEnum.M);
+        patient.setGender(AdministrativeGenderEnum.MALE);
 
         LinkedList<Patient> list = new LinkedList<Patient>();
         list.add(patient);
@@ -69,9 +69,9 @@ public class PatientResourceProvider implements IResourceProvider {
         patient2.getIdentifier().get(0).setValue("00003");
         patient2.addName().addFamily("Griffin");
         patient2.getName().get(0).addGiven("Lois");
-        patient2.setGender(AdministrativeGenderCodesEnum.F);
+        patient2.setGender(AdministrativeGenderEnum.FEMALE);
 
-        LinkedList<Patient> list2 = new LinkedList<Patient>();
+        LinkedList<Patient> list2 = new LinkedList<>();
         list2.add(patient2);
         myIdToPatientVersions.put(resourceId2, list2);
 

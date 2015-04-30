@@ -1,7 +1,6 @@
 package org.bch.c3pro.server.servlet;
 
-import ca.uhn.fhir.narrative.DefaultThymeleafNarrativeGenerator;
-import ca.uhn.fhir.narrative.INarrativeGenerator;
+import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 import ca.uhn.fhir.rest.server.RestfulServer;
 import org.bch.c3pro.server.iresource.PatientResourceProvider;
@@ -23,6 +22,8 @@ public class FHIRServlet extends RestfulServer {
        * configures itself to use them by calling
        * setResourceProviders()
        */
+        setFhirContext(FhirContext.forDstu2());
+
         List<IResourceProvider> resourceProviders = new ArrayList<>();
         resourceProviders.add(new PatientResourceProvider());
         setResourceProviders(resourceProviders);
