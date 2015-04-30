@@ -4,6 +4,7 @@ import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 import ca.uhn.fhir.rest.server.RestfulServer;
 import org.bch.c3pro.server.iresource.PatientResourceProvider;
+import org.bch.c3pro.server.iresource.QuestionnaireResourceProvider;
 
 import javax.servlet.ServletException;
 import java.util.ArrayList;
@@ -26,6 +27,7 @@ public class FHIRServlet extends RestfulServer {
 
         List<IResourceProvider> resourceProviders = new ArrayList<>();
         resourceProviders.add(new PatientResourceProvider());
+        resourceProviders.add(new QuestionnaireResourceProvider());
         setResourceProviders(resourceProviders);
         setUseBrowserFriendlyContentTypes(true);
     }
