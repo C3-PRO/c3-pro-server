@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:javaee="http://xmlns.jcp.org/xml/ns/javaee" xmlns:web="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+  <javaee:security-constraint>
+    <javaee:web-resource-collection>
+      <javaee:web-resource-name>All resources</javaee:web-resource-name>
+      <javaee:description>Protects all resources</javaee:description>
+      <!--javaee:url-pattern>/rest/*</javaee:url-pattern-->
+    </javaee:web-resource-collection>
+    <javaee:auth-constraint>
+      <javaee:role-name>RestClient</javaee:role-name>
+    </javaee:auth-constraint>
+  </javaee:security-constraint>
+  <javaee:login-config>
+    <javaee:auth-method>BASIC</javaee:auth-method>
+    <javaee:realm-name>ApplicationRealm</javaee:realm-name>
+  </javaee:login-config>
+  <javaee:security-role>
+    <javaee:role-name>RestClient</javaee:role-name>
+  </javaee:security-role>
+</web-app>
