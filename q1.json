@@ -1,0 +1,390 @@
+{
+                "resourceType":"Questionnaire",
+                "id":"24330",
+                "meta":{
+                    "versionId":"2",
+                    "lastUpdated":"2015-04-23T14:05:58.080-04:00"
+                },
+                "identifier":[
+                    {
+                        "value":"Clinical Questionnaire"
+                    }
+                ],
+                "date":"2015-04-23T11:06:53-07:00",
+                "publisher":"Edifecs",
+                "group":{
+                    "title":"Main Group",
+                    "group":[
+                        {
+                            "text":"Header Information",
+                            "question":[
+                                {
+                                    "linkId":"Link0",
+                                    "text":"Your name",
+                                    "type":"string"
+                                },
+                                {
+                                    "linkId":"Link1",
+                                    "text":"Today's date",
+                                    "type":"string"
+                                },
+                                {
+                                    "linkId":"Link2",
+                                    "text":"What is your main purpose in coming to our office today?",
+                                    "type":"string"
+                                }
+                            ]
+                        },
+                        {
+                            "text":"Constitutional symptoms",
+                            "question":[
+                                {
+                                    "linkId":"Link3",
+                                    "text":"fever",
+                                    "type":"boolean"
+                                },
+                                {
+                                    "linkId":"Link4",
+                                    "text":"weight loss",
+                                    "type":"boolean"
+                                },
+                                {
+                                    "linkId":"Link5",
+                                    "text":"extreme fatigue",
+                                    "type":"boolean"
+                                }
+                            ]
+                        },
+                        {
+                            "text":"Eyes",
+                            "question":[
+                                {
+                                    "linkId":"Link6",
+                                    "text":"double vision",
+                                    "type":"boolean"
+                                },
+                                {
+                                    "linkId":"Link7",
+                                    "text":"sudden loss of vision",
+                                    "type":"boolean"
+                                }
+                            ]
+                        },
+                        {
+                            "text":"Ears, nose, mouth and throat",
+                            "question":[
+                                {
+                                    "linkId":"Link8",
+                                    "text":"sore throat",
+                                    "type":"boolean"
+                                },
+                                {
+                                    "linkId":"Link9",
+                                    "text":"runny nose",
+                                    "type":"boolean"
+                                },
+                                {
+                                    "linkId":"Link10",
+                                    "text":"ear pain",
+                                    "type":"boolean"
+                                }
+                            ]
+                        },
+                        {
+                            "text":"Cardiovascular",
+                            "question":[
+                                {
+                                    "linkId":"Link11",
+                                    "text":"chest pain",
+                                    "type":"boolean"
+                                },
+                                {
+                                    "linkId":"Link12",
+                                    "text":"palpitations",
+                                    "type":"boolean"
+                                }
+                            ]
+                        },
+                        {
+                            "text":"Respiratory",
+                            "question":[
+                                {
+                                    "linkId":"Link13",
+                                    "text":"cough",
+                                    "type":"boolean"
+                                },
+                                {
+                                    "linkId":"Link14",
+                                    "text":"wheezing",
+                                    "type":"boolean"
+                                },
+                                {
+                                    "linkId":"Link15",
+                                    "text":"shortness of breath",
+                                    "type":"boolean"
+                                }
+                            ]
+                        },
+                        {
+                            "text":"Gastrointestinal",
+                            "question":[
+                                {
+                                    "linkId":"Link16",
+                                    "text":"nausea",
+                                    "type":"boolean"
+                                },
+                                {
+                                    "linkId":"Link17",
+                                    "text":"vomiting",
+                                    "type":"boolean"
+                                },
+                                {
+                                    "linkId":"Link18",
+                                    "text":"abdominal pain",
+                                    "type":"boolean"
+                                },
+                                {
+                                    "linkId":"Link19",
+                                    "text":"constipation",
+                                    "type":"boolean"
+                                },
+                                {
+                                    "linkId":"Link20",
+                                    "text":"diarrhea",
+                                    "type":"boolean"
+                                },
+                                {
+                                    "linkId":"Link21",
+                                    "text":"blood in stools",
+                                    "type":"boolean"
+                                }
+                            ]
+                        },
+                        {
+                            "text":"Genitourinary",
+                            "question":[
+                                {
+                                    "linkId":"Link22",
+                                    "text":"irregular menses",
+                                    "type":"boolean"
+                                },
+                                {
+                                    "linkId":"Link23",
+                                    "text":" vaginal bleeding after menopause",
+                                    "type":"boolean"
+                                },
+                                {
+                                    "linkId":"Link24",
+                                    "text":" frequent or painful urination",
+                                    "type":"boolean"
+                                },
+                                {
+                                    "linkId":"Link25",
+                                    "text":"bloody urine",
+                                    "type":"boolean"
+                                },
+                                {
+                                    "linkId":"Link26",
+                                    "text":"impotence",
+                                    "type":"boolean"
+                                }
+                            ]
+                        },
+                        {
+                            "text":"Skin",
+                            "question":[
+                                {
+                                    "linkId":"Link27",
+                                    "text":"rash",
+                                    "type":"boolean"
+                                },
+                                {
+                                    "linkId":"Link28",
+                                    "text":"changing mole",
+                                    "type":"boolean"
+                                }
+                            ]
+                        },
+                        {
+                            "text":"Neurological",
+                            "question":[
+                                {
+                                    "linkId":"Link29",
+                                    "text":"headache",
+                                    "type":"boolean"
+                                },
+                                {
+                                    "linkId":"Link30",
+                                    "text":" persistent weakness or numbness on one side of the body",
+                                    "type":"boolean"
+                                },
+                                {
+                                    "linkId":"Link31",
+                                    "text":"falling",
+                                    "type":"boolean"
+                                }
+                            ]
+                        },
+                        {
+                            "text":"Musculoskeletal",
+                            "question":[
+                                {
+                                    "linkId":"Link32",
+                                    "text":"joint pain",
+                                    "type":"boolean"
+                                },
+                                {
+                                    "linkId":"Link33",
+                                    "text":"muscle weakness",
+                                    "type":"boolean"
+                                }
+                            ]
+                        },
+                        {
+                            "text":"Psychiatric",
+                            "question":[
+                                {
+                                    "linkId":"Link34",
+                                    "text":"depression",
+                                    "type":"boolean"
+                                },
+                                {
+                                    "linkId":"Link35",
+                                    "text":" anxiety",
+                                    "type":"boolean"
+                                },
+                                {
+                                    "linkId":"Link36",
+                                    "text":" suicidal thoughts",
+                                    "type":"boolean"
+                                }
+                            ]
+                        },
+                        {
+                            "text":"Endocrine",
+                            "question":[
+                                {
+                                    "linkId":"Link37",
+                                    "text":"excessive thirst",
+                                    "type":"boolean"
+                                },
+                                {
+                                    "linkId":"Link38",
+                                    "text":"cold or heat intolerance",
+                                    "type":"boolean"
+                                },
+                                {
+                                    "linkId":"Link39",
+                                    "text":"breast mass",
+                                    "type":"boolean"
+                                }
+                            ]
+                        },
+                        {
+                            "text":"Hematologic",
+                            "question":[
+                                {
+                                    "linkId":"Link40",
+                                    "text":"unusual bruising or bleeding",
+                                    "type":"boolean"
+                                },
+                                {
+                                    "linkId":"Link41",
+                                    "text":"enlarged lymph nodes",
+                                    "type":"boolean"
+                                }
+                            ]
+                        },
+                        {
+                            "text":"Allergic",
+                            "question":[
+                                {
+                                    "linkId":"Link42",
+                                    "text":"hay fever",
+                                    "type":"boolean"
+                                }
+                            ]
+                        },
+                        {
+                            "text":"Other Concerns",
+                            "question":[
+                                {
+                                    "linkId":"Link43",
+                                    "text":"List of other concerns",
+                                    "type":"string"
+                                }
+                            ]
+                        },
+                        {
+                            "text":"Other Information",
+                            "question":[
+                                {
+                                    "linkId":"Link44",
+                                    "text":" New coming up in your family history",
+                                    "type":"string"
+                                },
+                                {
+                                    "linkId":"Link45",
+                                    "text":"Have you developed any new drug allergies?",
+                                    "type":"string"
+                                },
+                                {
+                                    "linkId":"Link46",
+                                    "text":"What do you do for exercise?",
+                                    "type":"string"
+                                },
+                                {
+                                    "linkId":"Link47",
+                                    "text":"How much tobacco do you smoke or chew per day?",
+                                    "type":"string"
+                                },
+                                {
+                                    "linkId":"Link48",
+                                    "text":"How much alcohol do you consume per week?",
+                                    "type":"string"
+                                },
+                                {
+                                    "linkId":"Link49",
+                                    "text":"How much caffeine do you consume per day?",
+                                    "type":"string"
+                                },
+                                {
+                                    "linkId":"Link50",
+                                    "text":"What method of birth control do you use?",
+                                    "type":"string"
+                                }
+                            ]
+                        },
+                        {
+                            "text":"General Information",
+                            "question":[
+                                {
+                                    "linkId":"Link51",
+                                    "text":"Your height",
+                                    "type":"string"
+                                },
+                                {
+                                    "linkId":"Link52",
+                                    "text":"Last known weight",
+                                    "type":"string"
+                                },
+                                {
+                                    "linkId":"Link53",
+                                    "text":"Typical systolic blood pressure",
+                                    "type":"string"
+                                },
+                                {
+                                    "linkId":"Link54",
+                                    "text":"Typical diastolic blood pressure",
+                                    "type":"string"
+                                },
+                                {
+                                    "linkId":"Link55",
+                                    "text":"Usual pulse at rest",
+                                    "type":"string"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            }
