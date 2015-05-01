@@ -17,6 +17,8 @@ import java.io.InputStream;
 public class AppConfig {
 
     public static String CONFIG_PROPERTIES_FILE= "config.properties";
+    public static String AWS_SQS_URL = "app.aws.sqs.url";
+
     private static Properties prop = new Properties();
     /**
      * Upload the configuration from config.properties files

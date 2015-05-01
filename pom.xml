@@ -75,6 +75,12 @@
 	    <version>0.9</version>
 	</dependency>
 
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk</artifactId>
+            <version>1.9.33</version>
+        </dependency>
+
         <!-- Import the CDI API, we use provided scope as the API is included in JBoss -->
         <dependency>
             <groupId>javax.enterprise</groupId>

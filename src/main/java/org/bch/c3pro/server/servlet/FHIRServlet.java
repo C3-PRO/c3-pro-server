@@ -29,7 +29,7 @@ public class FHIRServlet extends RestfulServer {
         List<IResourceProvider> resourceProviders = new ArrayList<>();
         resourceProviders.add(new PatientResourceProvider());
         resourceProviders.add(new QuestionnaireResourceProvider());
-	resourceProviders.add(new QuestionnaireAnswerResourceProvider());
+	    resourceProviders.add(new QuestionnaireAnswerResourceProvider());
         setResourceProviders(resourceProviders);
         setUseBrowserFriendlyContentTypes(true);
     }

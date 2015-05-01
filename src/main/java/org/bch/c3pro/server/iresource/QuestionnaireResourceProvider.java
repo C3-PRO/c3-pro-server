@@ -9,6 +9,7 @@ import ca.uhn.fhir.rest.annotation.*;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
+import org.bch.c3pro.server.external.SQSAccess;
 
 import java.util.*;
 
@@ -18,7 +19,7 @@ import java.util.*;
 public class QuestionnaireResourceProvider implements IResourceProvider  {
 
     private Map<Long, Deque<Questionnaire>> myIdToQVersions = new HashMap<>();
-
+    private SQSAccess sqs = new SQSAccess();
     /**
      * This is used to generate new IDs
      */
@@ -35,7 +36,11 @@ public class QuestionnaireResourceProvider implements IResourceProvider  {
         // Here we are just generating IDs sequentially
         long id = myNextId++;
         addNewVersion(theQ, id);
-
+        try {
+            sqs.sendMessage(theQ.toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         // Let the caller know the ID of the newly created resource
         return new MethodOutcome(new IdDt(id));
     }
