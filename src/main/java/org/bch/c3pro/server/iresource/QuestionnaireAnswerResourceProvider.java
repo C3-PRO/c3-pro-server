@@ -15,7 +15,7 @@ import java.util.*;
 /**
  * Created by CH176656 on 4/30/2015.
  */
-public class QuestionnaireAnswerResourceProvider implements IResourceProvider  {
+public class QuestionnaireAnswerResourceProvider extends C3PROResourceProvider implements IResourceProvider  {
 
     private Map<Long, Deque<QuestionnaireAnswers>> myIdToQVersions = new HashMap<>();
     private SQSAccess sqs = new SQSAccess();
@@ -25,7 +25,17 @@ public class QuestionnaireAnswerResourceProvider implements IResourceProvider  {
     private long myNextId = 1;
 
     @Override
+    protected String generateNewId() {
+        return UUID.randomUUID().toString();
+    }
+
+    @Override
     public Class<QuestionnaireAnswers> getResourceType() {
+        return QuestionnaireAnswers.class;
+    }
+
+    @Override
+    protected Class getResourceClass() {
         return QuestionnaireAnswers.class;
     }
 
@@ -35,11 +45,7 @@ public class QuestionnaireAnswerResourceProvider implements IResourceProvider  {
         // Here we are just generating IDs sequentially
         long id = myNextId++;
         addNewVersion(theQA, id);
-        try {
-            sqs.sendMessage(theQA.toString());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        this.sendMessage(theQA);
         // Let the caller know the ID of the newly created resource
         return new MethodOutcome(new IdDt(id));
     }

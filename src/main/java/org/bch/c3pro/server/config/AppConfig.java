@@ -16,8 +16,16 @@ import java.io.InputStream;
  */
 public class AppConfig {
 
-    public static String CONFIG_PROPERTIES_FILE= "config.properties";
-    public static String AWS_SQS_URL = "app.aws.sqs.url";
+    public static String CONFIG_PROPERTIES_FILE=    "config.properties";
+
+    public static String AWS_SQS_URL =              "app.aws.sqs.url";
+    public static String AWS_SQS_PROFILE =          "app.aws.sqs.profile";
+    public static String AWS_SQS_REGION =           "app.aws.sqs.region";
+
+    public static String AWS_S3_PROFILE =           "app.aws.s3.profile";
+    public static String AWS_S3_BUCKET_NAME =       "app.aws.s3.bucket";
+    public static String AWS_S3_REGION =            "app.aws.s3.region";
+
 
     private static Properties prop = new Properties();
     /**

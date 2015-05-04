@@ -20,6 +20,7 @@ import ca.uhn.fhir.rest.annotation.Search;
 import ca.uhn.fhir.rest.annotation.Update;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.server.IResourceProvider;
+import ca.uhn.fhir.rest.server.exceptions.InternalErrorException;
 import ca.uhn.fhir.rest.server.exceptions.InvalidRequestException;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 import ca.uhn.fhir.rest.server.exceptions.UnprocessableEntityException;
@@ -29,7 +30,7 @@ import java.util.*;
 /**
  * Created by CH176656 on 4/30/2015.
  */
-public class PatientResourceProvider implements IResourceProvider {
+public class PatientResourceProvider extends C3PROResourceProvider implements IResourceProvider {
 
     /**
      * This map has a resource ID as a key, and each key maps to a Deque list containing all versions of the resource with that ID.
@@ -41,6 +42,15 @@ public class PatientResourceProvider implements IResourceProvider {
      */
     private long myNextId = 1;
 
+    @Override
+    protected String generateNewId() {
+        return UUID.randomUUID().toString();
+    }
+
+    @Override
+    protected Class getResourceClass() {
+        return Patient.class;
+    }
     /**
      * Constructor, which pre-populates the provider with one resource instance.
      */
@@ -126,7 +136,7 @@ public class PatientResourceProvider implements IResourceProvider {
         long id = myNextId++;
 
         addNewVersion(thePatient, id);
-
+        this.sendMessage(thePatient);
         // Let the caller know the ID of the newly created resource
         return new MethodOutcome(new IdDt(id));
     }

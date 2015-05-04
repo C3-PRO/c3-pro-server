@@ -1,7 +1,6 @@
 package org.bch.c3pro.server.iresource;
 
 import ca.uhn.fhir.model.api.ResourceMetadataKeyEnum;
-import ca.uhn.fhir.model.dstu2.resource.Patient;
 import ca.uhn.fhir.model.dstu2.resource.Questionnaire;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.model.primitive.InstantDt;
@@ -9,43 +8,54 @@ import ca.uhn.fhir.rest.annotation.*;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
-import org.bch.c3pro.server.external.SQSAccess;
 
+import ca.uhn.fhir.rest.server.exceptions.InternalErrorException;
 import java.util.*;
 
 /**
  * Created by CH176656 on 4/30/2015.
  */
-public class QuestionnaireResourceProvider implements IResourceProvider  {
+public class QuestionnaireResourceProvider extends C3PROResourceProvider implements IResourceProvider  {
 
-    private Map<Long, Deque<Questionnaire>> myIdToQVersions = new HashMap<>();
-    private SQSAccess sqs = new SQSAccess();
+    private Map<String, Deque<Questionnaire>> myIdToQVersions = new HashMap<>();
+    //private SQSAccess sqs = new SQSAccess();
+    //FhirContext ctx = FhirContext.forDstu2();
     /**
      * This is used to generate new IDs
      */
     private long myNextId = 1;
+
+
+    @Override
+    protected String generateNewId() {
+        return UUID.randomUUID().toString();
+    }
 
     @Override
     public Class<Questionnaire> getResourceType() {
         return Questionnaire.class;
     }
 
-    @Create()
-    public MethodOutcome createPatient(@ResourceParam Questionnaire theQ) {
-
-        // Here we are just generating IDs sequentially
-        long id = myNextId++;
-        addNewVersion(theQ, id);
-        try {
-            sqs.sendMessage(theQ.toString());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        // Let the caller know the ID of the newly created resource
-        return new MethodOutcome(new IdDt(id));
+    @Override
+    protected Class getResourceClass() {
+        return Questionnaire.class;
     }
 
-    private void addNewVersion(Questionnaire thePatient, Long theId) {
+    @Create()
+    public MethodOutcome createQuestionnaire(@ResourceParam Questionnaire theQ) {
+
+
+        // long id = myNextId++;
+        String newId = generateNewId();
+
+        addNewVersion(theQ, newId);
+        this.sendMessage(theQ);
+        // Let the caller know the ID of the newly created resource
+        this.putResource(theQ);
+        return new MethodOutcome(new IdDt(newId));
+    }
+
+    private void addNewVersion(Questionnaire theQt, String theId) {
         InstantDt publishedDate;
         if (!myIdToQVersions.containsKey(theId)) {
             myIdToQVersions.put(theId, new LinkedList<Questionnaire>());
@@ -59,8 +69,8 @@ public class QuestionnaireResourceProvider implements IResourceProvider  {
 		/*
 		 * PUBLISHED time will always be set to the time that the first version was stored. UPDATED time is set to the time that the new version was stored.
 		 */
-        thePatient.getResourceMetadata().put(ResourceMetadataKeyEnum.PUBLISHED, publishedDate);
-        thePatient.getResourceMetadata().put(ResourceMetadataKeyEnum.UPDATED, InstantDt.withCurrentTime());
+        theQt.getResourceMetadata().put(ResourceMetadataKeyEnum.PUBLISHED, publishedDate);
+        theQt.getResourceMetadata().put(ResourceMetadataKeyEnum.UPDATED, InstantDt.withCurrentTime());
 
         Deque<Questionnaire> existingVersions = myIdToQVersions.get(theId);
 
@@ -68,25 +78,22 @@ public class QuestionnaireResourceProvider implements IResourceProvider  {
         String newVersion = Integer.toString(existingVersions.size());
 
         // Create an ID with the new version and assign it back to the resource
-        IdDt newId = new IdDt("Questionnaire", Long.toString(theId), newVersion);
-        thePatient.setId(newId);
-        existingVersions.add(thePatient);
+        IdDt newId = new IdDt("Questionnaire", theId, newVersion);
+        theQt.setId(newId);
+        existingVersions.add(theQt);
+
+
     }
 
     @Read(version = true)
     public Questionnaire readPatient(@IdParam IdDt theId) {
         Deque<Questionnaire> retVal;
-        try {
-            retVal = myIdToQVersions.get(theId.getIdPartAsLong());
-        } catch (NumberFormatException e) {
-			/*
-			 * If we can't parse the ID as a long, it's not valid so this is an unknown resource
-			 */
-            throw new ResourceNotFoundException(theId);
-        }
+        retVal = myIdToQVersions.get(theId.getIdPart());
 
         if (theId.hasVersionIdPart() == false) {
-            return retVal.getLast();
+            Questionnaire theQ = (Questionnaire) getResource(theId.getIdPart());
+            return theQ;
+            //return retVal.getLast();
         } else {
             for (Questionnaire nextVersion : retVal) {
                 String nextVersionId = nextVersion.getId().getVersionIdPart();

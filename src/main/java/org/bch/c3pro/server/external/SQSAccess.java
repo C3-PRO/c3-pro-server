@@ -13,19 +13,21 @@ import com.amazonaws.services.sqs.model.SendMessageRequest;
 /**
  * Created by CH176656 on 5/1/2015.
  */
-public class SQSAccess {
+public class SQSAccess implements Queue {
 
     private AmazonSQS sqs = null;
 
+    @Override
     public void sendMessage(String resource) throws C3PROException {
         setCredentials();
-        sqs.sendMessage(new SendMessageRequest(AppConfig.getProp(AppConfig.AWS_SQS_URL), resource));
+        this.sqs.sendMessage(new SendMessageRequest(AppConfig.getProp(AppConfig.AWS_SQS_URL), resource));
     }
 
     private void setCredentials() throws C3PROException {
         if (this.sqs == null) {
             AWSCredentials credentials = null;
             try {
+                System.setProperty("aws.profile", AppConfig.getProp(AppConfig.AWS_SQS_PROFILE));
                 credentials = new ProfileCredentialsProvider().getCredentials();
             } catch (Exception e) {
                 throw new C3PROException(
@@ -34,8 +36,7 @@ public class SQSAccess {
                                 "location (~/.aws/credentials), and is in valid format.",
                         e);
             }
-
-            AmazonSQS sqs = new AmazonSQSClient(credentials);
+            this.sqs = new AmazonSQSClient(credentials);
             Region usWest2 = Region.getRegion(Regions.US_WEST_2);
             sqs.setRegion(usWest2);
         }
