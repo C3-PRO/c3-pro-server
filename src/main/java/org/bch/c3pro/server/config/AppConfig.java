@@ -26,6 +26,8 @@ public class AppConfig {
     public static String AWS_S3_BUCKET_NAME =       "app.aws.s3.bucket";
     public static String AWS_S3_REGION =            "app.aws.s3.region";
 
+    public static String SECURITY_PUBLICKEY =       "app.security.publickey";
+
 
     private static Properties prop = new Properties();
     /**

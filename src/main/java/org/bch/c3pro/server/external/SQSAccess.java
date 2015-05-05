@@ -37,7 +37,7 @@ public class SQSAccess implements Queue {
                         e);
             }
             this.sqs = new AmazonSQSClient(credentials);
-            Region usWest2 = Region.getRegion(Regions.US_WEST_2);
+            Region usWest2 = Region.getRegion(Regions.fromName(AppConfig.getProp(AppConfig.AWS_SQS_REGION)));
             sqs.setRegion(usWest2);
         }
     }
