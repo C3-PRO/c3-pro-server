@@ -3,11 +3,17 @@ package org.bch.c3pro.server.iresource;
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.model.dstu2.resource.BaseResource;
 import ca.uhn.fhir.parser.IParser;
+import com.amazonaws.services.opsworks.model.App;
+import org.bch.c3pro.server.config.AppConfig;
 import org.bch.c3pro.server.exception.C3PROException;
 import org.bch.c3pro.server.external.Queue;
 import org.bch.c3pro.server.external.S3Access;
 import org.bch.c3pro.server.external.SQSAccess;
 import ca.uhn.fhir.rest.server.exceptions.InternalErrorException;
+
+import java.security.KeyFactory;
+import java.security.PublicKey;
+import java.security.spec.X509EncodedKeySpec;
 
 /**
  * Created by CH176656 on 5/4/2015.
@@ -23,7 +29,20 @@ public abstract class C3PROResourceProvider {
         jsonParser.setPrettyPrint(true);
         String message = jsonParser.encodeResourceToString(resource);
         try {
-            sqs.sendMessage(message);
+            if (!AppConfig.getProp(AppConfig.SECURITY_ENCRYPTION_ENABLED).toLowerCase().equals("yes")) {
+                sqs.sendMessage(message);
+            } else {
+                String publicKeyStr = null;
+                try {
+                    publicKeyStr = this.s3.get(AppConfig.getProp(AppConfig.SECURITY_PUBLICKEY));
+                } catch (C3PROException e) {
+                    new InternalErrorException("Error reading public key from AWS S3", e);
+                }
+                X509EncodedKeySpec publicSpec = new X509EncodedKeySpec(publicKeyStr.getBytes("UTF-8"));
+                KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+                PublicKey publicKey = keyFactory.generatePublic(publicSpec);
+                sqs.sendMessageEncrypted(message, publicKey);
+            }
         } catch (Exception e) {
             new InternalErrorException("Error sending message to Queue", e);
         }

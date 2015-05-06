@@ -2,6 +2,7 @@
 # Requirements: openssl
 # Copy the generated public-c3pro.der file into the corresponding S3 bucket
 # Copy the generated private-c3pro.der file into the corresponding directory in the BCH installation
+# This key will be used to encrypt the symmetric key to decript the sqs messages
 openssl genrsa -out keypair.pem 2048
 openssl rsa -in keypair.pem -outform DER -pubout -out public-c3pro.der
 openssl pkcs8 -topk8 -nocrypt -in keypair.pem -outform DER -out private-c3pro.der

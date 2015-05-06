@@ -26,9 +26,15 @@ public class AppConfig {
     public static String AWS_S3_BUCKET_NAME =       "app.aws.s3.bucket";
     public static String AWS_S3_REGION =            "app.aws.s3.region";
 
+    // The name of the public key file found in the S3 bucket
     public static String SECURITY_PUBLICKEY =       "app.security.publickey";
 
+    // The key posted in the metadata part of the message to SQS. The value will containt th encrypted symetric key
+    // to decrypt the message
+    public static String SECURITY_METADATAKEY =     "app.security.metadatakey";
 
+    // Whether we encrypt the messages when sent to the queue; yes - no
+    public static String SECURITY_ENCRYPTION_ENABLED = "app.security.encryption.enabled";
     private static Properties prop = new Properties();
     /**
      * Upload the configuration from config.properties files
