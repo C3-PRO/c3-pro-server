@@ -1,6 +1,7 @@
 package org.bch.c3pro.server.external;
 
 import com.amazonaws.services.sqs.model.MessageAttributeValue;
+import org.apache.commons.codec.binary.Base64;
 import org.bch.c3pro.server.config.AppConfig;
 import org.bch.c3pro.server.exception.C3PROException;
 import com.amazonaws.auth.AWSCredentials;
@@ -14,9 +15,12 @@ import com.amazonaws.services.sqs.model.SendMessageRequest;
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
+import javax.crypto.spec.IvParameterSpec;
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
 import java.security.PublicKey;
+import java.security.SecureRandom;
+import java.util.logging.Logger;
 
 /**
  * Created by CH176656 on 5/1/2015.
@@ -24,6 +28,7 @@ import java.security.PublicKey;
 public class SQSAccess implements Queue {
 
     private AmazonSQS sqs = null;
+    Logger log = Logger.getAnonymousLogger();
 
     @Override
     public void sendMessage(String resource) throws C3PROException {
@@ -33,6 +38,7 @@ public class SQSAccess implements Queue {
 
     @Override
     public void sendMessageEncrypted(String resource, PublicKey publicKey) throws C3PROException {
+        log.info("IN sendMessageEncrypted");
         setCredentials();
 
         // Generate the symetric private key to encrypt the message
@@ -44,15 +50,19 @@ public class SQSAccess implements Queue {
         String encKeyToSendStr = null;
         try {
             // We encrypt the symetric key using the public available key
-            encKeyToSend = encryptRSA(publicKey, symetricKey.toString().getBytes("UTF-8"));
-            encKeyToSendStr = new String(encKeyToSend, "UTF-8");
+            int size = Integer.parseInt(AppConfig.getProp(AppConfig.SECURITY_PRIVATEKEY_SIZE));
+            SecureRandom random = new SecureRandom();
+            IvParameterSpec iv = new IvParameterSpec(random.generateSeed(16));
 
+            encKeyToSend = encryptRSA(publicKey, symetricKey.toString().getBytes(AppConfig.UTF));
+            log.info("AAAAAAAAAAA:");
             // We encrypt the message
-            cipher = Cipher.getInstance("AES");
-            cipher.init(Cipher.ENCRYPT_MODE, symetricKey);
-            encResource = cipher.doFinal(resource.getBytes("UTF-8"));
-            encMessageStr = new String(encResource, "UTF-8");
-
+            cipher = Cipher.getInstance(AppConfig.getProp(AppConfig.SECURITY_PRIVATEKEY_ALG));
+            log.info("BBBBB:");
+            cipher.init(Cipher.ENCRYPT_MODE, symetricKey, iv);
+            log.info("CCCC:");
+            encResource = cipher.doFinal(resource.getBytes(AppConfig.UTF));
+            log.info("DDDD:");
         } catch (UnsupportedEncodingException e) {
             throw new C3PROException(e.getMessage(), e);
         } catch (InvalidKeyException e) {
@@ -61,12 +71,20 @@ public class SQSAccess implements Queue {
             throw new C3PROException(e.getMessage(), e);
         }
 
-        // We send the encrypted message to the Queue
-        SendMessageRequest mse = new SendMessageRequest(AppConfig.getProp(AppConfig.AWS_SQS_URL), encMessageStr);
+        // We send the encrypted message to the Queue. We Base64 encode it
+        SendMessageRequest mse = new SendMessageRequest(
+                AppConfig.getProp(AppConfig.AWS_SQS_URL),
+                Base64.encodeBase64String(encResource));
+
         MessageAttributeValue atr = new MessageAttributeValue();
-        atr.setStringValue(encKeyToSendStr);
+        atr.setStringValue(Base64.encodeBase64String(encKeyToSend));
+        atr.setDataType("String");
         mse.addMessageAttributesEntry(AppConfig.getProp(AppConfig.SECURITY_METADATAKEY), atr);
-        this.sqs.sendMessage(mse);
+        try {
+            this.sqs.sendMessage(mse);
+        } catch (Exception e) {
+            throw new C3PROException(e.getMessage(), e);
+        }
 
     }
 
@@ -74,8 +92,9 @@ public class SQSAccess implements Queue {
         SecretKey key = null;
 
         try {
-            KeyGenerator generator = KeyGenerator.getInstance("AES/CTR/PKCS5PADDING");
-            generator.init(256);
+            KeyGenerator generator = KeyGenerator.getInstance(AppConfig.getProp(AppConfig.SECURITY_PRIVATEKEY_BASEALG));
+            SecureRandom random = new SecureRandom();
+            generator.init(random);
             key = generator.generateKey();
         } catch (Exception e) {
             throw new C3PROException(e.getMessage(), e);
@@ -87,7 +106,7 @@ public class SQSAccess implements Queue {
         Cipher cipher = null;
         byte [] out = null;
         try {
-            cipher = Cipher.getInstance("RSA/ECB/OAEPWithSHA1AndMGF1Padding");
+            cipher = Cipher.getInstance(AppConfig.getProp(AppConfig.SECURITY_PUBLICKEY_ALG));
             cipher.init(Cipher.ENCRYPT_MODE, key);
             out = cipher.doFinal(text);
         } catch (Exception e) {

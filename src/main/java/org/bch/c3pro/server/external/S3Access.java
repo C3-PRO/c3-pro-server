@@ -47,6 +47,22 @@ public class S3Access implements KeyValueStorage {
         return out;
     }
 
+    @Override
+    public byte[] getBinary(String key) throws C3PROException {
+        setCredentials();
+        S3Object s3Object = s3.getObject(new GetObjectRequest(AppConfig.getProp(AppConfig.AWS_S3_BUCKET_NAME), key));
+        byte []out = readFromBinaryInputStream(s3Object.getObjectContent());
+        return out;
+    }
+
+    private byte []readFromBinaryInputStream(InputStream in) throws C3PROException {
+        try {
+            return IOUtils.toByteArray(in);
+        } catch (Exception e) {
+            throw new C3PROException(e.getMessage(), e);
+        }
+    }
+
     private String readFromInputStream(InputStream in) throws C3PROException {
         BufferedReader br = new BufferedReader(new InputStreamReader(in));
         String line;

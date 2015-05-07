@@ -14,6 +14,7 @@ import ca.uhn.fhir.rest.server.exceptions.InternalErrorException;
 import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.logging.Logger;
 
 /**
  * Created by CH176656 on 5/4/2015.
@@ -21,10 +22,11 @@ import java.security.spec.X509EncodedKeySpec;
 public abstract class C3PROResourceProvider {
     private Queue sqs = new SQSAccess();
     private S3Access s3 = new S3Access();
-
+    Logger log = Logger.getAnonymousLogger();
     protected FhirContext ctx = FhirContext.forDstu2();
 
     protected void sendMessage(BaseResource resource) throws InternalErrorException {
+        log.info("IN SEND MESSAGE");
         IParser jsonParser = this.ctx.newJsonParser();
         jsonParser.setPrettyPrint(true);
         String message = jsonParser.encodeResourceToString(resource);
@@ -32,18 +34,26 @@ public abstract class C3PROResourceProvider {
             if (!AppConfig.getProp(AppConfig.SECURITY_ENCRYPTION_ENABLED).toLowerCase().equals("yes")) {
                 sqs.sendMessage(message);
             } else {
-                String publicKeyStr = null;
+                byte [] publicKeyBin = null;
                 try {
-                    publicKeyStr = this.s3.get(AppConfig.getProp(AppConfig.SECURITY_PUBLICKEY));
+                    log.info("BEFORE READING PUBLICKEY");
+                    publicKeyBin = this.s3.getBinary(AppConfig.getProp(AppConfig.SECURITY_PUBLICKEY));
                 } catch (C3PROException e) {
+                    log.info(e.getMessage());
                     new InternalErrorException("Error reading public key from AWS S3", e);
                 }
-                X509EncodedKeySpec publicSpec = new X509EncodedKeySpec(publicKeyStr.getBytes("UTF-8"));
-                KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+                log.info("GRABING publickey");
+                X509EncodedKeySpec publicSpec = new X509EncodedKeySpec(publicKeyBin);
+                log.info("GRABING publickey2");
+                KeyFactory keyFactory = KeyFactory.getInstance(AppConfig.getProp(AppConfig.SECURITY_PUBLICKEY_BASEALG));
+                log.info("GRABING publickey3");
                 PublicKey publicKey = keyFactory.generatePublic(publicSpec);
+                log.info("GRABING publickey4");
                 sqs.sendMessageEncrypted(message, publicKey);
+                log.info("GRABING publickey5");
             }
         } catch (Exception e) {
+            log.info("EXCEPTION" + e.getMessage());
             new InternalErrorException("Error sending message to Queue", e);
         }
     }

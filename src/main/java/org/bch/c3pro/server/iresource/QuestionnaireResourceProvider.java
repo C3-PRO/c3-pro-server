@@ -86,7 +86,7 @@ public class QuestionnaireResourceProvider extends C3PROResourceProvider impleme
     }
 
     @Read(version = true)
-    public Questionnaire readPatient(@IdParam IdDt theId) {
+    public Questionnaire readQuestionnaire(@IdParam IdDt theId) {
         Deque<Questionnaire> retVal;
         retVal = myIdToQVersions.get(theId.getIdPart());
 
