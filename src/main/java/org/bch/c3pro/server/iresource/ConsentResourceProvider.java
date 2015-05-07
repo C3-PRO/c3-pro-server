@@ -1,7 +1,7 @@
 package org.bch.c3pro.server.iresource;
 
 import ca.uhn.fhir.model.api.ResourceMetadataKeyEnum;
-import ca.uhn.fhir.model.dstu2.resource.Questionnaire;
+import ca.uhn.fhir.model.dstu2.resource.Contract;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.model.primitive.InstantDt;
 import ca.uhn.fhir.rest.annotation.*;
@@ -9,15 +9,14 @@ import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 
-import ca.uhn.fhir.rest.server.exceptions.InternalErrorException;
 import java.util.*;
 
 /**
- * Created by CH176656 on 4/30/2015.
+ * Created by CH176656 on 5/7/2015.
  */
-public class QuestionnaireResourceProvider extends C3PROResourceProvider implements IResourceProvider  {
+public class ConsentResourceProvider extends C3PROResourceProvider implements IResourceProvider {
 
-    private Map<String, Deque<Questionnaire>> myIdToQVersions = new HashMap<>();
+    private Map<String, Deque<Contract>> myIdToContractVersions = new HashMap<>();
 
     @Override
     protected String generateNewId() {
@@ -25,33 +24,33 @@ public class QuestionnaireResourceProvider extends C3PROResourceProvider impleme
     }
 
     @Override
-    public Class<Questionnaire> getResourceType() {
-        return Questionnaire.class;
+    public Class<Contract> getResourceType() {
+        return Contract.class;
     }
 
     @Override
     protected Class getResourceClass() {
-        return Questionnaire.class;
+        return Contract.class;
     }
 
     @Create()
-    public MethodOutcome createQuestionnaire(@ResourceParam Questionnaire theQ) {
+    public MethodOutcome createContract(@ResourceParam Contract theContract) {
         String newId = generateNewId();
 
-        addNewVersion(theQ, newId);
-        this.sendMessage(theQ);
+        addNewVersion(theContract, newId);
+        this.sendMessage(theContract);
         // Let the caller know the ID of the newly created resource
-        this.putResource(theQ);
+        this.putResource(theContract);
         return new MethodOutcome(new IdDt(newId));
     }
 
-    private void addNewVersion(Questionnaire theQt, String theId) {
+    private void addNewVersion(Contract theContract, String theId) {
         InstantDt publishedDate;
-        if (!myIdToQVersions.containsKey(theId)) {
-            myIdToQVersions.put(theId, new LinkedList<Questionnaire>());
+        if (!myIdToContractVersions.containsKey(theId)) {
+            myIdToContractVersions.put(theId, new LinkedList<Contract>());
             publishedDate = InstantDt.withCurrentTime();
         } else {
-            Questionnaire currentQ = myIdToQVersions.get(theId).getLast();
+            Contract currentQ = myIdToContractVersions.get(theId).getLast();
             Map<ResourceMetadataKeyEnum<?>, Object> resourceMetadata = currentQ.getResourceMetadata();
             publishedDate = (InstantDt) resourceMetadata.get(ResourceMetadataKeyEnum.PUBLISHED);
         }
@@ -59,31 +58,29 @@ public class QuestionnaireResourceProvider extends C3PROResourceProvider impleme
 		/*
 		 * PUBLISHED time will always be set to the time that the first version was stored. UPDATED time is set to the time that the new version was stored.
 		 */
-        theQt.getResourceMetadata().put(ResourceMetadataKeyEnum.PUBLISHED, publishedDate);
-        theQt.getResourceMetadata().put(ResourceMetadataKeyEnum.UPDATED, InstantDt.withCurrentTime());
+        theContract.getResourceMetadata().put(ResourceMetadataKeyEnum.PUBLISHED, publishedDate);
+        theContract.getResourceMetadata().put(ResourceMetadataKeyEnum.UPDATED, InstantDt.withCurrentTime());
 
-        Deque<Questionnaire> existingVersions = myIdToQVersions.get(theId);
+        Deque<Contract> existingVersions = myIdToContractVersions.get(theId);
 
         // We just use the current number of versions as the next version number
         String newVersion = Integer.toString(existingVersions.size());
 
         // Create an ID with the new version and assign it back to the resource
-        IdDt newId = new IdDt("Questionnaire", theId, newVersion);
-        theQt.setId(newId);
-        existingVersions.add(theQt);
+        IdDt newId = new IdDt("Contract", theId, newVersion);
+        theContract.setId(newId);
+        existingVersions.add(theContract);
     }
 
     @Read(version = true)
-    public Questionnaire readQuestionnaire(@IdParam IdDt theId) {
-        Deque<Questionnaire> retVal;
-        retVal = myIdToQVersions.get(theId.getIdPart());
+    public Contract readContract(@IdParam IdDt theId) {
+        Deque<Contract> retVal;
+        retVal = myIdToContractVersions.get(theId.getIdPart());
 
         if (theId.hasVersionIdPart() == false) {
-            Questionnaire theQ = (Questionnaire) getResource(theId.getIdPart());
-            return theQ;
-            //return retVal.getLast();
+            return retVal.getLast();
         } else {
-            for (Questionnaire nextVersion : retVal) {
+            for (Contract nextVersion : retVal) {
                 String nextVersionId = nextVersion.getId().getVersionIdPart();
                 if (theId.getVersionIdPart().equals(nextVersionId)) {
                     return nextVersion;
@@ -92,18 +89,17 @@ public class QuestionnaireResourceProvider extends C3PROResourceProvider impleme
             // No matching version
             throw new ResourceNotFoundException("Unknown version: " + theId.getValue());
         }
-
     }
 
     @Search
-    public List<Questionnaire> findQuestionnairesUsingArbitraryCtriteria() {
-        LinkedList<Questionnaire> retVal = new LinkedList<>();
+    public List<Contract> findContractsUsingArbitraryCtriteria() {
+        LinkedList<Contract> retVal = new LinkedList<>();
 
-        for (Deque<Questionnaire> nextQList : myIdToQVersions.values()) {
-            Questionnaire nextQ = nextQList.getLast();
+        for (Deque<Contract> nextQList : myIdToContractVersions.values()) {
+            Contract nextQ = nextQList.getLast();
             retVal.add(nextQ);
         }
-
         return retVal;
     }
+
 }

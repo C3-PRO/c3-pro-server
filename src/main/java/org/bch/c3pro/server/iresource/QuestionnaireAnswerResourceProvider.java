@@ -17,12 +17,7 @@ import java.util.*;
  */
 public class QuestionnaireAnswerResourceProvider extends C3PROResourceProvider implements IResourceProvider  {
 
-    private Map<Long, Deque<QuestionnaireAnswers>> myIdToQVersions = new HashMap<>();
-    private SQSAccess sqs = new SQSAccess();
-    /**
-     * This is used to generate new IDs
-     */
-    private long myNextId = 1;
+    private Map<String, Deque<QuestionnaireAnswers>> myIdToQVersions = new HashMap<>();
 
     @Override
     protected String generateNewId() {
@@ -41,16 +36,14 @@ public class QuestionnaireAnswerResourceProvider extends C3PROResourceProvider i
 
     @Create()
     public MethodOutcome createQA(@ResourceParam QuestionnaireAnswers theQA) {
-
-        // Here we are just generating IDs sequentially
-        long id = myNextId++;
-        addNewVersion(theQA, id);
+        String newId = generateNewId();
+        addNewVersion(theQA, newId);
         this.sendMessage(theQA);
         // Let the caller know the ID of the newly created resource
-        return new MethodOutcome(new IdDt(id));
+        return new MethodOutcome(new IdDt(newId));
     }
 
-    private void addNewVersion(QuestionnaireAnswers theQA, Long theId) {
+    private void addNewVersion(QuestionnaireAnswers theQA, String theId) {
         InstantDt publishedDate;
         if (!myIdToQVersions.containsKey(theId)) {
             myIdToQVersions.put(theId, new LinkedList<QuestionnaireAnswers>());
@@ -73,7 +66,7 @@ public class QuestionnaireAnswerResourceProvider extends C3PROResourceProvider i
         String newVersion = Integer.toString(existingVersions.size());
 
         // Create an ID with the new version and assign it back to the resource
-        IdDt newId = new IdDt("QuestionnaireAnswers", Long.toString(theId), newVersion);
+        IdDt newId = new IdDt("QuestionnaireAnswers", theId, newVersion);
         theQA.setId(newId);
         existingVersions.add(theQA);
     }
@@ -81,14 +74,7 @@ public class QuestionnaireAnswerResourceProvider extends C3PROResourceProvider i
     @Read(version = true)
     public QuestionnaireAnswers readQA(@IdParam IdDt theId) {
         Deque<QuestionnaireAnswers> retVal;
-        try {
-            retVal = myIdToQVersions.get(theId.getIdPartAsLong());
-        } catch (NumberFormatException e) {
-			/*
-			 * If we can't parse the ID as a long, it's not valid so this is an unknown resource
-			 */
-            throw new ResourceNotFoundException(theId);
-        }
+        retVal = myIdToQVersions.get(theId.getIdPart());
 
         if (theId.hasVersionIdPart() == false) {
             return retVal.getLast();
@@ -102,7 +88,6 @@ public class QuestionnaireAnswerResourceProvider extends C3PROResourceProvider i
             // No matching version
             throw new ResourceNotFoundException("Unknown version: " + theId.getValue());
         }
-
     }
 
     @Search
