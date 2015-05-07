@@ -38,7 +38,7 @@ public class SQSAccess implements Queue {
 
     @Override
     public void sendMessageEncrypted(String resource, PublicKey publicKey) throws C3PROException {
-        log.info("IN sendMessageEncrypted");
+
         setCredentials();
 
         // Generate the symetric private key to encrypt the message
@@ -53,16 +53,12 @@ public class SQSAccess implements Queue {
             int size = Integer.parseInt(AppConfig.getProp(AppConfig.SECURITY_PRIVATEKEY_SIZE));
             SecureRandom random = new SecureRandom();
             IvParameterSpec iv = new IvParameterSpec(random.generateSeed(16));
-
             encKeyToSend = encryptRSA(publicKey, symetricKey.toString().getBytes(AppConfig.UTF));
-            log.info("AAAAAAAAAAA:");
+
             // We encrypt the message
             cipher = Cipher.getInstance(AppConfig.getProp(AppConfig.SECURITY_PRIVATEKEY_ALG));
-            log.info("BBBBB:");
             cipher.init(Cipher.ENCRYPT_MODE, symetricKey, iv);
-            log.info("CCCC:");
             encResource = cipher.doFinal(resource.getBytes(AppConfig.UTF));
-            log.info("DDDD:");
         } catch (UnsupportedEncodingException e) {
             throw new C3PROException(e.getMessage(), e);
         } catch (InvalidKeyException e) {
