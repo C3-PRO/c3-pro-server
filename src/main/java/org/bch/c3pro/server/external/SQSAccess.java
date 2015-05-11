@@ -43,6 +43,7 @@ public class SQSAccess implements Queue {
 
         // Generate the symetric private key to encrypt the message
         SecretKey symetricKey = generateSecretKey();
+
         byte []encKeyToSend = null;
         byte []encResource = null;
         Cipher cipher;
@@ -51,13 +52,14 @@ public class SQSAccess implements Queue {
         try {
             // We encrypt the symetric key using the public available key
             int size = Integer.parseInt(AppConfig.getProp(AppConfig.SECURITY_PRIVATEKEY_SIZE));
-            SecureRandom random = new SecureRandom();
-            IvParameterSpec iv = new IvParameterSpec(random.generateSeed(16));
+            //SecureRandom random = new SecureRandom();
+            //IvParameterSpec iv = new IvParameterSpec(random.generateSeed(16));
             encKeyToSend = encryptRSA(publicKey, symetricKey.toString().getBytes(AppConfig.UTF));
 
             // We encrypt the message
             cipher = Cipher.getInstance(AppConfig.getProp(AppConfig.SECURITY_PRIVATEKEY_ALG));
-            cipher.init(Cipher.ENCRYPT_MODE, symetricKey, iv);
+            //cipher.init(Cipher.ENCRYPT_MODE, symetricKey, iv);
+            cipher.init(Cipher.ENCRYPT_MODE, symetricKey, new IvParameterSpec(new byte[size]));
             encResource = cipher.doFinal(resource.getBytes(AppConfig.UTF));
         } catch (UnsupportedEncodingException e) {
             throw new C3PROException(e.getMessage(), e);
@@ -89,8 +91,9 @@ public class SQSAccess implements Queue {
 
         try {
             KeyGenerator generator = KeyGenerator.getInstance(AppConfig.getProp(AppConfig.SECURITY_PRIVATEKEY_BASEALG));
+            int size = Integer.parseInt(AppConfig.getProp(AppConfig.SECURITY_PRIVATEKEY_SIZE));
             SecureRandom random = new SecureRandom();
-            generator.init(random);
+            generator.init(size*8, random);
             key = generator.generateKey();
         } catch (Exception e) {
             throw new C3PROException(e.getMessage(), e);

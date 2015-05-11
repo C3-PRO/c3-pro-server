@@ -38,7 +38,7 @@ public abstract class C3PROResourceProvider {
                 try {
                     publicKeyBin = this.s3.getBinary(AppConfig.getProp(AppConfig.SECURITY_PUBLICKEY));
                 } catch (C3PROException e) {
-                    log.info(e.getMessage());
+                    log.severe(e.getMessage());
                     new InternalErrorException("Error reading public key from AWS S3", e);
                 }
                 X509EncodedKeySpec publicSpec = new X509EncodedKeySpec(publicKeyBin);
@@ -47,6 +47,7 @@ public abstract class C3PROResourceProvider {
                 sqs.sendMessageEncrypted(message, publicKey);
             }
         } catch (Exception e) {
+            e.printStackTrace();
             new InternalErrorException("Error sending message to Queue", e);
         }
     }
