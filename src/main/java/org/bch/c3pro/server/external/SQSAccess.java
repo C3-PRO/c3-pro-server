@@ -54,7 +54,7 @@ public class SQSAccess implements Queue {
             int size = Integer.parseInt(AppConfig.getProp(AppConfig.SECURITY_PRIVATEKEY_SIZE));
             //SecureRandom random = new SecureRandom();
             //IvParameterSpec iv = new IvParameterSpec(random.generateSeed(16));
-            encKeyToSend = encryptRSA(publicKey, symetricKey.toString().getBytes(AppConfig.UTF));
+            encKeyToSend = encryptRSA(publicKey, symetricKey.getEncoded());
 
             // We encrypt the message
             cipher = Cipher.getInstance(AppConfig.getProp(AppConfig.SECURITY_PRIVATEKEY_ALG));
