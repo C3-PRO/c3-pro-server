@@ -36,16 +36,29 @@ public class QuestionnaireResourceProvider extends C3PROResourceProvider impleme
 
     @Create()
     public MethodOutcome createQuestionnaire(@ResourceParam Questionnaire theQ) {
-        String newId = generateNewId();
+        String newId;
+        String version = null;
 
-        addNewVersion(theQ, newId);
+        if (theQ.getId() == null) {
+            newId = generateNewId();
+        } else {
+            if (theQ.getId().getIdPart()== null) {
+                newId = generateNewId();
+            } else {
+                newId = theQ.getId().getIdPart();
+            }
+            if (theQ.getId().getVersionIdPart()!=null) {
+                version = theQ.getId().getVersionIdPart();
+            }
+        }
+        addNewVersion(theQ, newId, version);
         this.sendMessage(theQ);
         // Let the caller know the ID of the newly created resource
         this.putResource(theQ);
         return new MethodOutcome(new IdDt(newId));
     }
 
-    private void addNewVersion(Questionnaire theQt, String theId) {
+    private void addNewVersion(Questionnaire theQt, String theId, String version) {
         InstantDt publishedDate;
         if (!myIdToQVersions.containsKey(theId)) {
             myIdToQVersions.put(theId, new LinkedList<Questionnaire>());
@@ -65,7 +78,12 @@ public class QuestionnaireResourceProvider extends C3PROResourceProvider impleme
         Deque<Questionnaire> existingVersions = myIdToQVersions.get(theId);
 
         // We just use the current number of versions as the next version number
-        String newVersion = Integer.toString(existingVersions.size());
+        String newVersion;
+        if (version == null) {
+            newVersion = Integer.toString(existingVersions.size());
+        } else {
+            newVersion = version;
+        }
 
         // Create an ID with the new version and assign it back to the resource
         IdDt newId = new IdDt("Questionnaire", theId, newVersion);

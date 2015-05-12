@@ -11,6 +11,8 @@ import com.amazonaws.regions.Regions;
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.AmazonSQSClient;
 import com.amazonaws.services.sqs.model.SendMessageRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
@@ -20,7 +22,6 @@ import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
 import java.security.PublicKey;
 import java.security.SecureRandom;
-import java.util.logging.Logger;
 
 /**
  * Created by CH176656 on 5/1/2015.
@@ -28,7 +29,7 @@ import java.util.logging.Logger;
 public class SQSAccess implements Queue {
 
     private AmazonSQS sqs = null;
-    Logger log = Logger.getAnonymousLogger();
+    Logger log = LoggerFactory.getLogger(SQSAccess.class);
 
     @Override
     public void sendMessage(String resource) throws C3PROException {

@@ -10,11 +10,12 @@ import org.bch.c3pro.server.external.Queue;
 import org.bch.c3pro.server.external.S3Access;
 import org.bch.c3pro.server.external.SQSAccess;
 import ca.uhn.fhir.rest.server.exceptions.InternalErrorException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.spec.X509EncodedKeySpec;
-import java.util.logging.Logger;
 
 /**
  * Created by CH176656 on 5/4/2015.
@@ -22,7 +23,9 @@ import java.util.logging.Logger;
 public abstract class C3PROResourceProvider {
     private Queue sqs = new SQSAccess();
     private S3Access s3 = new S3Access();
-    Logger log = Logger.getAnonymousLogger();
+
+    Logger log = LoggerFactory.getLogger(C3PROResourceProvider.class);
+
     protected FhirContext ctx = FhirContext.forDstu2();
 
     protected void sendMessage(BaseResource resource) throws InternalErrorException {
@@ -38,7 +41,7 @@ public abstract class C3PROResourceProvider {
                 try {
                     publicKeyBin = this.s3.getBinary(AppConfig.getProp(AppConfig.SECURITY_PUBLICKEY));
                 } catch (C3PROException e) {
-                    log.severe(e.getMessage());
+                    log.error(e.getMessage());
                     new InternalErrorException("Error reading public key from AWS S3", e);
                 }
                 X509EncodedKeySpec publicSpec = new X509EncodedKeySpec(publicKeyBin);
