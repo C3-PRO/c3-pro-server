@@ -1,0 +1,1 @@
+echo -n "admin" | openssl dgst -sha1 -binary | openssl base64

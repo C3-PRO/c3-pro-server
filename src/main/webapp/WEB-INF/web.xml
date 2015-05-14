@@ -3,8 +3,8 @@
   <javaee:security-constraint>
     <javaee:web-resource-collection>
       <javaee:web-resource-name>All resources</javaee:web-resource-name>
-      <javaee:description>Protects all resources</javaee:description>
-      <!--javaee:url-pattern>/rest/*</javaee:url-pattern-->
+      <javaee:description>Protects all rest resources</javaee:description>
+      <javaee:url-pattern>/rest/*</javaee:url-pattern>
     </javaee:web-resource-collection>
     <javaee:auth-constraint>
       <javaee:role-name>RestClient</javaee:role-name>
@@ -21,7 +21,7 @@
 
   <javaee:login-config>
     <javaee:auth-method>BASIC</javaee:auth-method>
-    <javaee:realm-name>ApplicationRealm</javaee:realm-name>
+    <javaee:realm-name>StaticUserPwd</javaee:realm-name>
   </javaee:login-config>
   <javaee:security-role>
     <javaee:role-name>RestClient</javaee:role-name>
