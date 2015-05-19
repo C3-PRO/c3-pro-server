@@ -4,7 +4,6 @@
     <javaee:web-resource-collection>
       <javaee:web-resource-name>All resources</javaee:web-resource-name>
       <javaee:description>Protects all rest resources</javaee:description>
-      <javaee:url-pattern>/rest/*</javaee:url-pattern>
     </javaee:web-resource-collection>
     <javaee:auth-constraint>
       <javaee:role-name>RestClient</javaee:role-name>
@@ -14,14 +13,32 @@
     <javaee:servlet-name>fhir</javaee:servlet-name>
     <javaee:servlet-class>org.bch.c3pro.server.servlet.FHIRServlet</javaee:servlet-class>
   </javaee:servlet>
+    <javaee:servlet>
+        <javaee:servlet-name>oauth</javaee:servlet-name>
+        <javaee:servlet-class>org.bch.c3pro.server.servlet.OAuth</javaee:servlet-class>
+    </javaee:servlet>
   <javaee:servlet-mapping>
     <javaee:servlet-name>fhir</javaee:servlet-name>
     <javaee:url-pattern>/fhir/*</javaee:url-pattern>
   </javaee:servlet-mapping>
-
+    <javaee:servlet-mapping>
+        <javaee:servlet-name>oauth</javaee:servlet-name>
+        <javaee:url-pattern>/oauth</javaee:url-pattern>
+    </javaee:servlet-mapping>
+    <javaee:filter>
+        <javaee:filter-name>OAuthFilter</javaee:filter-name>
+        <javaee:filter-class>org.bch.c3pro.server.servlet.OAuthFilter</javaee:filter-class>
+    </javaee:filter>
+    <javaee:filter-mapping>
+        <javaee:filter-name>OAuthFilter</javaee:filter-name>
+        <javaee:url-pattern>/rest/*</javaee:url-pattern>
+    </javaee:filter-mapping>
   <javaee:login-config>
-    <javaee:auth-method>BASIC</javaee:auth-method>
     <javaee:realm-name>StaticUserPwd</javaee:realm-name>
+    <javaee:auth-method>FORM</javaee:auth-method>
+      <javaee:form-login-config>
+        <javaee:form-login-page>/oauth</javaee:form-login-page>
+      </javaee:form-login-config>
   </javaee:login-config>
   <javaee:security-role>
     <javaee:role-name>RestClient</javaee:role-name>
