@@ -1,4 +1,4 @@
-package org.bch.c3pro.server.servlet;
+package org.bch.security.oauth.server;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -11,12 +11,11 @@ import java.io.IOException;
 public class OAuthFilter implements Filter {
 
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
-
-    }
+    public void init(FilterConfig filterConfig) throws ServletException {}
 
     @Override
-    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
+            throws IOException, ServletException {
         try {
             HttpServletRequest request = (HttpServletRequest)servletRequest;
             request.login("", "");
