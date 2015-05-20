@@ -51,6 +51,7 @@
     <javaee:filter-mapping>
         <javaee:filter-name>OAuthFilter</javaee:filter-name>
         <javaee:url-pattern>/rest/*</javaee:url-pattern>
+        <javaee:url-pattern>/fhir/*</javaee:url-pattern>
     </javaee:filter-mapping>
   <javaee:login-config>
     <javaee:realm-name>StaticUserPwd</javaee:realm-name>
