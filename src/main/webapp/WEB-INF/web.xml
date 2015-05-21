@@ -4,7 +4,7 @@
     <javaee:web-resource-collection>
       <javaee:web-resource-name>All resources</javaee:web-resource-name>
       <javaee:description>Protect authorization request</javaee:description>
-        <javaee:url-pattern>/authorization</javaee:url-pattern>
+        <javaee:url-pattern>/oauth</javaee:url-pattern>
     </javaee:web-resource-collection>
     <javaee:auth-constraint>
       <javaee:role-name>RestClient</javaee:role-name>
