@@ -40,7 +40,7 @@
 
     <javaee:servlet-mapping>
         <javaee:servlet-name>auth_server</javaee:servlet-name>
-        <javaee:url-pattern>/authorization</javaee:url-pattern>
+        <javaee:url-pattern>/oauth</javaee:url-pattern>
     </javaee:servlet-mapping>
 
     <javaee:filter>
