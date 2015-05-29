@@ -18,8 +18,8 @@ import java.util.Date;
 
 /**
  * Created by CH176656 on 5/20/2015.
- * Follows pecifications for oauth2 two legged described in
- * <a>https://tools.ietf.org/html/draft-ietf-oauth-v2-31#section-4.4</a>
+ * Follows specifications for oauth2 two legged according to
+ * <a href="https://tools.ietf.org/html/draft-ietf-oauth-v2-31#section-4.4">this</a>
  */
 public class OAuth2Server extends HttpServlet {
     public static final long ONE_SECOND_IN_MILLIS = 1000;

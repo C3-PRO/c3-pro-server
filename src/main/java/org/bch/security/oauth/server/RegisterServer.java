@@ -1,0 +1,232 @@
+package org.bch.security.oauth.server;
+
+import com.amazonaws.services.route53.model.ResourceRecordSet;
+import org.apache.axiom.om.util.Base64;
+import org.jboss.security.auth.spi.Util;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import javax.naming.InitialContext;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.security.SecureRandom;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.Random;
+import java.util.UUID;
+
+/**
+ * Created by CH176656 on 5/29/2015.
+ * Registration server for credentails generation
+ */
+public class RegisterServer extends HttpServlet {
+    protected static final String CONF_PARAM_HASH_ALGORITHM = "hashAlgorithm";
+    protected static final String CONF_PARAM_DATASOURCE = "dataSource";
+
+    protected static final String JSON_TAG_SANDBOX = "sandbox";
+    protected static final String JSON_TAG_RECEIPT = "receipt-data";
+
+    protected static final String DEFAULT_HASH_ALGORITHM = "SHA1";
+
+    protected static final String ANTI_SPAM_HEADER = "Antispam";
+
+    protected static final String SELECT_ANTISPAM = "Select token from AntiSpamToken where token='%s'";
+    protected static final String INSERT_USER = "Insert into Users values ('%s', '%s')";
+    protected static final String INSERT_USER_ROLE = "Insert into UserRoles values ('%s', '%s')";
+
+    protected static final String USER_ROLES = "AppUser";
+    protected static final String CONTENT_TYPE = "application/json";
+
+    protected static final String APPLE_ENDPOINT = "https://sandbox.itunes.apple.com/verifyReceipt";
+
+    protected static final String APPLE_JSON_KEY_STATUS = "status";
+
+    protected static final String JSON_REQUEST_APPLE =
+            "{\n" +
+            "  \"" + JSON_TAG_RECEIPT + "\":\"%s\" "+
+            "}";
+
+    protected static final String JSON_RESPONSE =
+            "{\n" +
+            "  \"client_id\":\"%s\",\n" +
+            "  \"client_secret\": \"%s\",\n" +
+            "  \"grant_types\": [\"client_credentials\"],\n" +
+            "  \"token_endpoint_auth_method\":\"client_secret_basic\",\n" +
+            "}";
+
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        boolean validationOK=false;
+
+        // Apply the AntiSpam filter
+        if (!passFilter(request)) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
+        }
+
+        // We read the content and validate the receipt
+        String jsonPost = getPostContent(request);
+        JSONObject json=null;
+        try {
+            json = new JSONObject(jsonPost);
+            boolean sandbox = json.getBoolean(JSON_TAG_SANDBOX);
+            if (sandbox) {
+                validationOK = true;
+            } else {
+                String receipt = json.getString(JSON_TAG_RECEIPT);
+                validationOK = validateAppleReceipt(receipt);
+            }
+        } catch (JSONException e) {
+            PrintWriter out = response.getWriter();
+            out.write(e.getMessage());
+            out.flush();
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return;
+        } catch (Exception e) {
+            PrintWriter out = response.getWriter();
+            out.write(e.getMessage());
+            out.flush();
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return;
+        }
+
+        // If no validation, the request is not authorized
+        if (!validationOK) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
+        }
+
+        // At this point the request is authorized. We generate the credentials
+        String clientId = generateClientId();
+        String password = generatePassword();
+        String encPassword = Util.createPasswordHash(this.getHashAlgorithm(),Util.BASE64_ENCODING,null,null, password);
+        String insert = String.format(INSERT_USER,clientId, encPassword);
+        String insertRoles = String.format(INSERT_USER_ROLE, clientId, USER_ROLES);
+        try {
+            InitialContext ctx = new InitialContext();
+            DataSource ds = (DataSource) ctx.lookup(this.getDatasourceName());
+            Connection conn = ds.getConnection();
+            Statement stmt = conn.createStatement();
+            stmt.execute(insert);
+            stmt.execute(insertRoles);
+        } catch (Exception e) {
+            PrintWriter out = response.getWriter();
+            out.write(e.getMessage());
+            out.flush();
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        }
+
+        // We generate the response and return 201
+        String jsonResp = String.format(JSON_RESPONSE, clientId, password);
+        response.setContentType(CONTENT_TYPE);
+        PrintWriter out = response.getWriter();
+        out.write(jsonResp);
+        response.setStatus(HttpServletResponse.SC_CREATED);
+        out.flush();
+    }
+
+    /**
+     * Generates a clientId. In the default implementation, it is a randomly generated UUID
+     * @return the new clientId
+     */
+    protected String generateClientId() {
+        return UUID.randomUUID().toString();
+    }
+
+    protected String generatePassword() {
+        Random rnd = new SecureRandom();
+        byte[] key = new byte[64];
+        rnd.nextBytes(key);
+        return Base64.encode(key);
+    }
+
+    /**
+     * Performs a validation of the receipt to Apple servers
+     * @param receipt
+     * @return
+     */
+    protected boolean validateAppleReceipt(String receipt) throws Exception {
+        String jsonReq = String.format(JSON_REQUEST_APPLE, receipt);
+        URL url = new URL(APPLE_ENDPOINT);
+        HttpURLConnection con = (HttpURLConnection) url.openConnection();
+        con.setRequestMethod("POST");
+        con.setDoOutput(true);
+        con.setDoInput(true);
+        con.setRequestProperty("Content-type", "application/json");
+        con.setRequestProperty("Content-Length", Integer.toString(jsonReq.getBytes().length));
+        con.getOutputStream().write(jsonReq.getBytes());
+        con.getOutputStream().flush();
+
+        BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream(), "UTF-8"));
+        String line=null;
+        StringBuilder sb = new StringBuilder();
+        while((line = in.readLine())!= null) {
+            sb.append(line);
+        }
+        con.getOutputStream().close();
+        con.getInputStream().close();
+
+        JSONObject jsonRet = new JSONObject(sb.toString());
+        int status = jsonRet.getInt(APPLE_JSON_KEY_STATUS);
+        return (status == 0);
+    }
+
+    /**
+     * Performs an antispam filter
+     * @param request The request from the servlet
+     * @return true if passes the filter. False otherwise
+     * @throws Exception
+     */
+    protected boolean passFilter(HttpServletRequest request) throws ServletException {
+        try {
+            String token = request.getHeader(ANTI_SPAM_HEADER);
+            String query = String.format(SELECT_ANTISPAM, token);
+            InitialContext ctx = new InitialContext();
+            DataSource ds = (DataSource) ctx.lookup(this.getDatasourceName());
+            Connection conn = ds.getConnection();
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            boolean ret = rs.next();
+            rs.close();
+            return ret;
+        } catch (Exception e) {
+            throw new ServletException(e.getMessage());
+        }
+    }
+
+    private String getPostContent(HttpServletRequest request) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        BufferedReader reader = request.getReader();
+        String line=null;
+        while((line = reader.readLine()) != null) {
+            sb.append(line);
+        }
+        return sb.toString();
+    }
+
+    /**
+     * @return the hash algorithm used to store the generated passwords
+     */
+    protected String getHashAlgorithm() {
+        String alg = getServletConfig().getInitParameter(CONF_PARAM_HASH_ALGORITHM);
+        if (alg==null) return DEFAULT_HASH_ALGORITHM;
+        return alg;
+    }
+
+    /**
+     * @return The jndi name of the data source to store the tokens
+     */
+    protected String getDatasourceName() {
+        String out = getServletConfig().getInitParameter(CONF_PARAM_DATASOURCE);
+        return out;
+    }
+
+}
+
+
