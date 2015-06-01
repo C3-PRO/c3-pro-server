@@ -1,5 +1,8 @@
 package org.bch.security.oauth.server;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.security.auth.login.LoginException;
@@ -22,6 +25,8 @@ import java.util.Date;
  * <a href="https://tools.ietf.org/html/draft-ietf-oauth-v2-31#section-4.4">this</a>
  */
 public class OAuth2Server extends HttpServlet {
+    private Logger log = LoggerFactory.getLogger(OAuth2Server.class);
+
     public static final long ONE_SECOND_IN_MILLIS = 1000;
     public static final int DEFAULT_TOKEN_SIZE= 64;
     public static final int DEFAULT_SECONDS = 3600;
@@ -58,10 +63,12 @@ public class OAuth2Server extends HttpServlet {
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException {
         String grantType = request.getParameter(GRANT_TYPE);
         if (grantType==null) {
+            log.info("Bad request: granttype is null");
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
         if (!(grantType.toLowerCase().equals(CLIENT_CREDENTIALS.toLowerCase()))) {
+            log.info("Bad request: granttype: " + grantType + " not supported");
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
@@ -88,6 +95,7 @@ public class OAuth2Server extends HttpServlet {
             response.setContentType(CONTENT_TYPE);
             PrintWriter out = response.getWriter();
             out.write(responseJSON);
+            log.info("User " + username + " authenticated. Access token has been generated");
             response.setStatus(HttpServletResponse.SC_ACCEPTED);
         }
         catch(NamingException ex) {

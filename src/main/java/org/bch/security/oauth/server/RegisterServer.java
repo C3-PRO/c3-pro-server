@@ -5,6 +5,8 @@ import org.apache.axiom.om.util.Base64;
 import org.jboss.security.auth.spi.Util;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.naming.InitialContext;
 import javax.servlet.ServletException;
@@ -24,9 +26,11 @@ import java.util.UUID;
 
 /**
  * Created by CH176656 on 5/29/2015.
- * Registration server for credentails generation
+ * Registration server for credentials generation
  */
 public class RegisterServer extends HttpServlet {
+    private Logger log = LoggerFactory.getLogger(RegisterServer.class);
+
     protected static final String CONF_PARAM_HASH_ALGORITHM = "hashAlgorithm";
     protected static final String CONF_PARAM_DATASOURCE = "dataSource";
 
@@ -66,6 +70,7 @@ public class RegisterServer extends HttpServlet {
 
         // Apply the AntiSpam filter
         if (!passFilter(request)) {
+            log.info("Antispam token not validated!");
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
@@ -76,10 +81,12 @@ public class RegisterServer extends HttpServlet {
         try {
             json = new JSONObject(jsonPost);
             boolean sandbox = json.getBoolean(JSON_TAG_SANDBOX);
-            if (sandbox) {
+            if (!sandbox) {
                 validationOK = true;
+                log.info("Sandbox flag is false");
             } else {
                 String receipt = json.getString(JSON_TAG_RECEIPT);
+                log.info("Apple Receipt validated");
                 validationOK = validateAppleReceipt(receipt);
             }
         } catch (JSONException e) {
@@ -186,11 +193,13 @@ public class RegisterServer extends HttpServlet {
     protected boolean passFilter(HttpServletRequest request) throws ServletException {
         try {
             String token = request.getHeader(ANTI_SPAM_HEADER);
-            String query = String.format(SELECT_ANTISPAM, token);
+            String tokenEnc = Util.createPasswordHash(this.getHashAlgorithm(),Util.BASE64_ENCODING,null,null, token);
+            String query = String.format(SELECT_ANTISPAM, tokenEnc);
             InitialContext ctx = new InitialContext();
             DataSource ds = (DataSource) ctx.lookup(this.getDatasourceName());
             Connection conn = ds.getConnection();
             Statement stmt = conn.createStatement();
+
             ResultSet rs = stmt.executeQuery(query);
             boolean ret = rs.next();
             rs.close();

@@ -7,7 +7,7 @@
         <javaee:url-pattern>/oauth</javaee:url-pattern>
     </javaee:web-resource-collection>
     <javaee:auth-constraint>
-      <javaee:role-name>RestClient</javaee:role-name>
+      <javaee:role-name>AppUser</javaee:role-name>
     </javaee:auth-constraint>
     </javaee:security-constraint>
 
@@ -16,6 +16,21 @@
       <javaee:servlet-class>org.bch.c3pro.server.servlet.FHIRServlet</javaee:servlet-class>
     </javaee:servlet>
 
+    <!--RegisterServer configuration -->
+    <javaee:servlet>
+        <javaee:servlet-name>register</javaee:servlet-name>
+        <javaee:servlet-class>org.bch.security.oauth.server.RegisterServer</javaee:servlet-class>
+        <javaee:init-param>
+            <javaee:param-name>dataSource</javaee:param-name>
+            <javaee:param-value>java:jboss/datasources/c3proAuthDS</javaee:param-value>
+        </javaee:init-param>
+        <javaee:init-param>
+            <javaee:param-name>hashAlgorithm</javaee:param-name>
+            <javaee:param-value>SHA1</javaee:param-value>
+        </javaee:init-param>
+    </javaee:servlet>
+
+    <!--OAuth2 Server configuration -->
     <javaee:servlet>
         <javaee:servlet-name>auth_server</javaee:servlet-name>
         <javaee:servlet-class>org.bch.security.oauth.server.OAuth2Server</javaee:servlet-class>
@@ -43,21 +58,29 @@
         <javaee:url-pattern>/oauth</javaee:url-pattern>
     </javaee:servlet-mapping>
 
+    <javaee:servlet-mapping>
+        <javaee:servlet-name>register</javaee:servlet-name>
+        <javaee:url-pattern>/register</javaee:url-pattern>
+    </javaee:servlet-mapping>
+
+    <!--OAuth2 Filter -->
     <javaee:filter>
         <javaee:filter-name>OAuthFilter</javaee:filter-name>
         <javaee:filter-class>org.bch.security.oauth.server.OAuthFilter</javaee:filter-class>
     </javaee:filter>
 
+    <!--Web resources indicated here will be protected through oauth2 -->
     <javaee:filter-mapping>
         <javaee:filter-name>OAuthFilter</javaee:filter-name>
         <javaee:url-pattern>/rest/*</javaee:url-pattern>
         <javaee:url-pattern>/fhir/*</javaee:url-pattern>
     </javaee:filter-mapping>
+
   <javaee:login-config>
     <javaee:realm-name>StaticUserPwd</javaee:realm-name>
     <javaee:auth-method>BASIC</javaee:auth-method>
   </javaee:login-config>
   <javaee:security-role>
-    <javaee:role-name>RestClient</javaee:role-name>
+    <javaee:role-name>AppUser</javaee:role-name>
   </javaee:security-role>
 </web-app>
