@@ -41,7 +41,6 @@ public class OAuthServerFilter implements Filter{
             }
             byte [] authBytes = Base64.decode(parts[1]);
             String auth = new String(authBytes, "UTF-8");
-            System.out.println("GGGGG: " + auth);
             String []cred = auth.split(":");
             request.login(cred[0], cred[1]);
             filterChain.doFilter(servletRequest, servletResponse);
