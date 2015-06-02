@@ -4,6 +4,7 @@ import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.Writer;
 
 /**
  * Created by CH176656 on 5/19/2015.
@@ -22,7 +23,10 @@ public class OAuthFilter implements Filter {
             filterChain.doFilter(servletRequest, servletResponse);
         } catch (Exception e) {
             HttpServletResponse response = (HttpServletResponse) servletResponse;
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            ErrorReturn err = new ErrorReturn();
+            err.setErrorType(ErrorReturn.ErrorType.ERROR_UNAUTHORIZED_CLIENT);
+            //err.setErrorDesc(e.getMessage());
+            err.writeError(response, HttpServletResponse.SC_UNAUTHORIZED);
         }
     }
 

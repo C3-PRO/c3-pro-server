@@ -2,6 +2,8 @@ package org.bch.security.oauth.server;
 
 import com.amazonaws.services.route53.model.ResourceRecordSet;
 import org.apache.axiom.om.util.Base64;
+import org.bch.c3pro.server.config.AppConfig;
+import org.bch.c3pro.server.exception.C3PROException;
 import org.jboss.security.auth.spi.Util;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -51,6 +53,8 @@ public class RegisterServer extends HttpServlet {
     protected static final String APPLE_ENDPOINT = "https://sandbox.itunes.apple.com/verifyReceipt";
 
     protected static final String APPLE_JSON_KEY_STATUS = "status";
+    protected static final String APPLE_JSON_KEY_RECEIPT = "receipt";
+    protected static final String APPLE_JSON_KEY_RECEIPT_BID = "bid";
 
     protected static final String JSON_REQUEST_APPLE =
             "{\n" +
@@ -71,7 +75,11 @@ public class RegisterServer extends HttpServlet {
         // Apply the AntiSpam filter
         if (!passFilter(request)) {
             log.info("Antispam token not validated!");
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            //response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            ErrorReturn err = new ErrorReturn();
+            err.setErrorType(ErrorReturn.ErrorType.ERROR_UNAUTHORIZED_CLIENT);
+            err.setErrorDesc("Antispam token not validated");
+            err.writeError(response, HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
 
@@ -86,26 +94,27 @@ public class RegisterServer extends HttpServlet {
                 log.info("Sandbox flag is false");
             } else {
                 String receipt = json.getString(JSON_TAG_RECEIPT);
-                log.info("Apple Receipt validated");
                 validationOK = validateAppleReceipt(receipt);
             }
         } catch (JSONException e) {
-            PrintWriter out = response.getWriter();
-            out.write(e.getMessage());
-            out.flush();
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            ErrorReturn err = new ErrorReturn();
+            err.setErrorType(ErrorReturn.ErrorType.ERROR_INVALID_REQUEST);
+            err.writeError(response, HttpServletResponse.SC_BAD_REQUEST);
             return;
         } catch (Exception e) {
-            PrintWriter out = response.getWriter();
-            out.write(e.getMessage());
-            out.flush();
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            ErrorReturn err = new ErrorReturn();
+            err.setErrorType(ErrorReturn.ErrorType.ERROR_INVALID_REQUEST);
+            err.setErrorDesc(e.getMessage());
+            err.writeError(response, HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
 
         // If no validation, the request is not authorized
         if (!validationOK) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            ErrorReturn err = new ErrorReturn();
+            err.setErrorType(ErrorReturn.ErrorType.ERROR_UNAUTHORIZED_CLIENT);
+            err.setErrorDesc("Apple receipt not valid");
+            err.writeError(response, HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
 
@@ -123,10 +132,10 @@ public class RegisterServer extends HttpServlet {
             stmt.execute(insert);
             stmt.execute(insertRoles);
         } catch (Exception e) {
-            PrintWriter out = response.getWriter();
-            out.write(e.getMessage());
-            out.flush();
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            ErrorReturn err = new ErrorReturn();
+            err.setErrorType(ErrorReturn.ErrorType.ERROR_INVALID_REQUEST);
+            err.setErrorDesc(e.getMessage());
+            err.writeError(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
 
         // We generate the response and return 201
@@ -146,6 +155,18 @@ public class RegisterServer extends HttpServlet {
         return UUID.randomUUID().toString();
     }
 
+    /**
+     * Returns the app ios id that will be used to compare the receipt data
+     * @return
+     */
+    protected String getAppId() {
+        try {
+            return AppConfig.getProp(AppConfig.APP_IOS_ID);
+        } catch (C3PROException e) {
+            return "";
+        }
+    }
+
     protected String generatePassword() {
         Random rnd = new SecureRandom();
         byte[] key = new byte[64];
@@ -159,6 +180,7 @@ public class RegisterServer extends HttpServlet {
      * @return
      */
     protected boolean validateAppleReceipt(String receipt) throws Exception {
+        log.info("Validating Apple Receipt");
         String jsonReq = String.format(JSON_REQUEST_APPLE, receipt);
         URL url = new URL(APPLE_ENDPOINT);
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
@@ -169,6 +191,7 @@ public class RegisterServer extends HttpServlet {
         con.setRequestProperty("Content-Length", Integer.toString(jsonReq.getBytes().length));
         con.getOutputStream().write(jsonReq.getBytes());
         con.getOutputStream().flush();
+        con.getOutputStream().close();
 
         BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream(), "UTF-8"));
         String line=null;
@@ -176,12 +199,23 @@ public class RegisterServer extends HttpServlet {
         while((line = in.readLine())!= null) {
             sb.append(line);
         }
-        con.getOutputStream().close();
         con.getInputStream().close();
 
         JSONObject jsonRet = new JSONObject(sb.toString());
         int status = jsonRet.getInt(APPLE_JSON_KEY_STATUS);
-        return (status == 0);
+        boolean ret = false;
+        if (status == 0) {
+            JSONObject receiptJSON = jsonRet.getJSONObject(APPLE_JSON_KEY_RECEIPT);
+            String bid = receiptJSON.getString(APPLE_JSON_KEY_RECEIPT_BID);
+            log.info("BID:" + bid);
+            ret = bid.trim().toLowerCase().equals(this.getAppId().trim().toLowerCase());
+            if (ret) {
+                log.info("Receipt validated against Apple servers");
+            } else {
+                log.warn("Receipt status 0, but iOS app id not valid:" + bid);
+            }
+        }
+        return ret;
     }
 
     /**
@@ -205,7 +239,8 @@ public class RegisterServer extends HttpServlet {
             rs.close();
             return ret;
         } catch (Exception e) {
-            throw new ServletException(e.getMessage());
+            e.printStackTrace();
+            return false;
         }
     }
 

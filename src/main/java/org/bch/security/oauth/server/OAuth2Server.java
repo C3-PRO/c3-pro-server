@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.security.SecureRandom;
 import java.sql.Connection;
@@ -60,16 +61,22 @@ public class OAuth2Server extends HttpServlet {
         return out;
     }
 
-    public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String grantType = request.getParameter(GRANT_TYPE);
         if (grantType==null) {
-            log.info("Bad request: granttype is null");
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            log.info("Grant type is null");
+            ErrorReturn err = new ErrorReturn();
+            err.setErrorType(ErrorReturn.ErrorType.ERROR_INVALID_REQUEST);
+            err.setErrorDesc("Grant type is null");
+            err.writeError(response, HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
         if (!(grantType.toLowerCase().equals(CLIENT_CREDENTIALS.toLowerCase()))) {
-            log.info("Bad request: granttype: " + grantType + " not supported");
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            log.info("Grant type: " + grantType + " not supported");
+            ErrorReturn err = new ErrorReturn();
+            err.setErrorType(ErrorReturn.ErrorType.ERROR_UNSUPPORTED_GRANT_TYPE);
+            err.setErrorDesc("Grant type not supported");
+            err.writeError(response, HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
         try {
@@ -102,15 +109,25 @@ public class OAuth2Server extends HttpServlet {
             ex.printStackTrace();
             LoginException le = new LoginException("Error looking up DataSource from: "+this.getDatasourceName());
             le.initCause(ex);
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            ErrorReturn err = new ErrorReturn();
+            err.setErrorType(ErrorReturn.ErrorType.ERROR_INVALID_REQUEST);
+            err.setErrorDesc("Error accessing authorization database");
+            err.writeError(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+
         } catch(SQLException ex) {
             ex.printStackTrace();
             LoginException le = new LoginException("Query failed");
             le.initCause(ex);
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            ErrorReturn err = new ErrorReturn();
+            err.setErrorType(ErrorReturn.ErrorType.ERROR_INVALID_REQUEST);
+            err.setErrorDesc("SQL Error");
+            err.writeError(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         } catch(Exception ex) {
             ex.printStackTrace();
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            ErrorReturn err = new ErrorReturn();
+            err.setErrorType(ErrorReturn.ErrorType.ERROR_UNAUTHORIZED_CLIENT);
+            err.writeError(response, HttpServletResponse.SC_UNAUTHORIZED);
         }
     }
 

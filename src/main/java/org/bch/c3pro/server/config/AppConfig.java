@@ -33,16 +33,18 @@ public class AppConfig {
     // to decrypt the message
     public static String SECURITY_METADATAKEY =     "app.security.metadatakey";
 
-    public static String SECURITY_PRIVATEKEY_ALG =  "app.security.secretkey.algorithm";
+    public static String SECURITY_PRIVATEKEY_ALG =      "app.security.secretkey.algorithm";
     public static String SECURITY_PRIVATEKEY_BASEALG =  "app.security.secretkey.basealgorithm";
 
-    public static String SECURITY_PRIVATEKEY_SIZE = "app.security.secretkey.size";
-    public static String SECURITY_PUBLICKEY_ALG =   "app.security.publickey.algorithm";
+    public static String SECURITY_PRIVATEKEY_SIZE =     "app.security.secretkey.size";
+    public static String SECURITY_PUBLICKEY_ALG =       "app.security.publickey.algorithm";
     public static String SECURITY_PUBLICKEY_BASEALG =   "app.security.publickey.basealgorithm";
 
     public static String UTF = "UTF-8";
     // Whether we encrypt the messages when sent to the queue; yes - no
-    public static String SECURITY_ENCRYPTION_ENABLED = "app.security.encryption.enabled";
+    public static String SECURITY_ENCRYPTION_ENABLED =  "app.security.encryption.enabled";
+
+    public static String APP_IOS_ID =                   "app.ios.id";
     private static Properties prop = new Properties();
     /**
      * Upload the configuration from config.properties files

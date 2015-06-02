@@ -3,8 +3,8 @@
   <javaee:security-constraint>
     <javaee:web-resource-collection>
       <javaee:web-resource-name>All resources</javaee:web-resource-name>
-      <javaee:description>Protect authorization request</javaee:description>
-        <javaee:url-pattern>/oauth</javaee:url-pattern>
+      <!--javaee:description>Protect authorization request</javaee:description-->
+        <!--javaee:url-pattern>/oauth</javaee:url-pattern-->
     </javaee:web-resource-collection>
     <javaee:auth-constraint>
       <javaee:role-name>AppUser</javaee:role-name>
@@ -69,11 +69,23 @@
         <javaee:filter-class>org.bch.security.oauth.server.OAuthFilter</javaee:filter-class>
     </javaee:filter>
 
+    <!--OAuth2Server Filter -->
+    <javaee:filter>
+        <javaee:filter-name>OAuthServerFilter</javaee:filter-name>
+        <javaee:filter-class>org.bch.security.oauth.server.OAuthServerFilter</javaee:filter-class>
+    </javaee:filter>
+
     <!--Web resources indicated here will be protected through oauth2 -->
     <javaee:filter-mapping>
         <javaee:filter-name>OAuthFilter</javaee:filter-name>
         <javaee:url-pattern>/rest/*</javaee:url-pattern>
         <javaee:url-pattern>/fhir/*</javaee:url-pattern>
+    </javaee:filter-mapping>
+
+    <!--OAuth Authorization server is protected though a special filter -->
+    <javaee:filter-mapping>
+        <javaee:filter-name>OAuthServerFilter</javaee:filter-name>
+        <javaee:url-pattern>/oauth</javaee:url-pattern>
     </javaee:filter-mapping>
 
   <javaee:login-config>
