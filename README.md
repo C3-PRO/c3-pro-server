@@ -38,6 +38,7 @@ The registration phase should be called only once per device. Once the device is
     Authentication: Basic BASE64(ClientId:Secret)
 
 **Oauth2 authorization response**
+
     HTTP/1.1 201 Created
     Content-Type: application/json
     {
