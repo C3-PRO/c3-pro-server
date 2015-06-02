@@ -4,16 +4,16 @@ C3-PRO-Server is a highly reliable and scalable FHIR DSTU2 compliant web server,
 
 The system servers the following rest methods:
 
-    GET /c3pro/fhir/Questionnaire
-    POST /c3pro/fhir/QuestionnaireAnswer
-    POST /c3pro/fhir/Contract
+    HTTP/1.1 GET /c3pro/fhir/Questionnaire
+    HTTP/1.1 POST /c3pro/fhir/QuestionnaireAnswer
+    HTTP/1.1 POST /c3pro/fhir/Contract
 
 It uses oauth2 two legged for authorization, which needs an initial phase for registration:
 
 **Registration request:**
 
-    POST /c3pro/register
-    HTTP Header Antispam: {{in-app-stored secret}}
+    HTTP/1.1 POST /c3pro/register
+    HTTP/1.1 Header Antispam: {{in-app-stored secret}}
     {
       “sandbox”: true/false,
       “receipt-data”: {{your apple-supplied app purchase receipt}}
@@ -34,7 +34,7 @@ The registration phase should be called only once per device. Once the device is
 
 **Oauth2 authorization request**
 
-    POST /c3pro/oauth?grant_type=client_credentials
+    HTTP/1.1 POST /c3pro/oauth?grant_type=client_credentials
     Authentication: Basic BASE64(ClientId:Secret)
 
 **Oauth2 authorization response**
