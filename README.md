@@ -132,7 +132,7 @@ insert into AntiSpamToken (token) values ('{{the_token_hashed_with_sha1}}');
 </security-domain>
 ```
 
-## Building and deploying for development environment ##
+## Building and deploying in DEV ##
 
 Once the project is cloned or download, in the root of the project:
 
