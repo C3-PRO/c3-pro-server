@@ -93,7 +93,7 @@ insert into AntiSpamToken (token) values ('{{the_token_hashed_with_sha1}}');
 
 ```
 #!shell
-$HOME_C3PRO/cp ojdbc14.jar $JBOSS_HOME/standalone/deployments
+$C3PRO_HOME/cp ojdbc14.jar $JBOSS_HOME/standalone/deployments
 ```
 
 * Configure the data source by editing the file *$JBOSS_HOME/standalone/configuration/standalone.xml*. In the data source section place the following:
@@ -167,7 +167,7 @@ These commands take the resource files located in *src/main/resources/qa* or *sr
 
 The system uses the Java SDK provided by Amazon. The SDK will be installed automatically since it is a maven dependency. However, it grabs the credentials to access the S3 bucket and SQS from a file that should be located here:
 
-    $HOME/.aws/credentials
+    ~/.aws/credentials
 
 The content of the file should be something like:
 
@@ -190,7 +190,7 @@ And the corresponding variables in *configuration.properties* would look like:
     app.aws.sqs.profile=sqsprofile    
     app.aws.s3.profile=s3profile
     
-To obtain acess keys and secrets from AWS, visit http://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSGettingStartedGuide/AWSCredentials.html. We suggest to create a user in AWS-IAM with only permissions to access S3 and SQS, and generate the access key and secret for this user.
+To obtain access keys and secrets from AWS, visit http://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSGettingStartedGuide/AWSCredentials.html. We suggest to create a user in AWS-IAM with only permissions to access S3 and SQS, and generate the access key and secret for this user.
 
 ## Providing public key ##
 
