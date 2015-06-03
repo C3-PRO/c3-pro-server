@@ -78,14 +78,55 @@ The system uses java 7 and we recommend to use JBoss AS7. To install the basic t
 
 the systems uses an oracle DB to manage credentials and bearer token. Here are the steps to configure the DB properly:
 
-1. Run the table creation script: {{src/main/scripts/create_tables.sql}} in the DB
+1. Run the table creation script: *{{src/main/scripts/create_tables.sql}}* in the DB
 2. Insert an antispam token:
     
-    insert into AntiSpamToken (token) values ('{{the_token_hashed_with_sha1}}');
-
-  To generate sha1 hashed token execute the script: {{src/main/scripts/generate_hashed_token.sql}} replacing {{"REPLACE by a high entropy token"}} by the desired anti spam token. 
-
-
-
+```
+#!sql
+insert into AntiSpamToken (token) values ('{{the_token_hashed_with_sha1}}');
+```
 
 
+  To generate sha1 hashed token execute the script: *{{src/main/scripts/generate_hashed_token.sql}}* replacing *{{"REPLACE by a high entropy token"}}* by the desired anti spam token.
+
+3. Deploy the provided oracle jdbc driver in jBoss:
+
+    cp ojdbc14.jar $JBOSS_HOME/standalone/deployments
+
+4. Configure the data source by editing the file *$JBOSS_HOME/standalone/configuration/standalone.xml*. In the data source section place the following:
+
+
+```
+#!xml
+
+<datasource jndi-name="java:jboss/datasources/c3proAuthDS" pool-name="c3proAuthDS" enabled="true" use-java-context="true">
+    <connection-url>{{jdbc_connection_to_db}}</connection-url>
+    <driver>ojdbc14.jar</driver>
+    <security>
+        <user-name>{{db_username}}</user-name>
+        <password>{{db_password}}</password>
+    </security>
+</datasource>
+```
+
+5.- Configure OAuth2LoginModule by editing the file *$JBOSS_HOME/standalone/configuration/standalone.xml*, and adding the following in the security-domains section:
+
+
+```
+#!xml
+
+<security-domain name="StaticUserPwd" cache-type="default">
+    <authentication>
+        <login-module code="org.bch.security.oauth.OAuth2LoginModule" flag="required">
+            <module-option name="dsJndiName" value="java:jboss/datasources/c3proAuthDS"/>
+            <module-option name="principalsQuery" value="select passwd from Users where username=?"/>
+            <module-option name="rolesQuery" value="select userRoles, 'Roles' from UserRoles where username=?"/>
+            <module-option name="hashAlgorithm" value="SHA1"/>
+            <module-option name="hashEncoding" value="BASE64"/>
+            <module-option name="hashCharset" value="UTF-8"/>
+            <module-option name="hashUserPassword" value="true"/>
+            <module-option name="hashStorePassword" value="false"/>
+        </login-module>
+    </authentication>
+</security-domain>
+```
