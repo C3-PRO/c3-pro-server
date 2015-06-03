@@ -22,6 +22,7 @@ import java.net.URL;
 import java.security.SecureRandom;
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Random;
 import java.util.UUID;
@@ -124,11 +125,13 @@ public class RegisterServer extends HttpServlet {
         String encPassword = Util.createPasswordHash(this.getHashAlgorithm(),Util.BASE64_ENCODING,null,null, password);
         String insert = String.format(INSERT_USER,clientId, encPassword);
         String insertRoles = String.format(INSERT_USER_ROLE, clientId, USER_ROLES);
+        Connection conn = null;
+        Statement stmt=null;
         try {
             InitialContext ctx = new InitialContext();
             DataSource ds = (DataSource) ctx.lookup(this.getDatasourceName());
-            Connection conn = ds.getConnection();
-            Statement stmt = conn.createStatement();
+            conn = ds.getConnection();
+            stmt = conn.createStatement();
             stmt.execute(insert);
             stmt.execute(insertRoles);
         } catch (Exception e) {
@@ -136,6 +139,17 @@ public class RegisterServer extends HttpServlet {
             err.setErrorType(ErrorReturn.ErrorType.ERROR_INVALID_REQUEST);
             err.setErrorDesc(e.getMessage());
             err.writeError(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        } finally {
+            if( stmt != null ) {
+                try {
+                    stmt.close();
+                } catch(SQLException e) {}
+            }
+            if( conn != null ) {
+                try {
+                    conn.close();
+                } catch (SQLException ex) {}
+            }
         }
 
         // We generate the response and return 201
@@ -225,22 +239,41 @@ public class RegisterServer extends HttpServlet {
      * @throws Exception
      */
     protected boolean passFilter(HttpServletRequest request) throws ServletException {
+        ResultSet rs=null;
+        Connection conn=null;
+        Statement stmt=null;
         try {
             String token = request.getHeader(ANTI_SPAM_HEADER);
             String tokenEnc = Util.createPasswordHash(this.getHashAlgorithm(),Util.BASE64_ENCODING,null,null, token);
             String query = String.format(SELECT_ANTISPAM, tokenEnc);
             InitialContext ctx = new InitialContext();
             DataSource ds = (DataSource) ctx.lookup(this.getDatasourceName());
-            Connection conn = ds.getConnection();
-            Statement stmt = conn.createStatement();
+            conn = ds.getConnection();
+            stmt = conn.createStatement();
 
-            ResultSet rs = stmt.executeQuery(query);
+            rs = stmt.executeQuery(query);
             boolean ret = rs.next();
             rs.close();
             return ret;
         } catch (Exception e) {
             e.printStackTrace();
             return false;
+        } finally {
+            if (rs != null) {
+                try {
+                    rs.close();
+                } catch(SQLException e) {}
+            }
+            if( stmt != null ) {
+                try {
+                    stmt.close();
+                } catch(SQLException e) {}
+            }
+            if( conn != null ) {
+                try {
+                    conn.close();
+                } catch (SQLException ex) {}
+            }
         }
     }
 

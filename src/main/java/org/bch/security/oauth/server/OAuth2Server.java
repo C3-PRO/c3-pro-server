@@ -79,6 +79,8 @@ public class OAuth2Server extends HttpServlet {
             err.writeError(response, HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
+        Connection conn = null;
+        Statement stmt = null;
         try {
             String newToken = this.randomToken();
             Date date = new Date();
@@ -93,8 +95,8 @@ public class OAuth2Server extends HttpServlet {
 
             InitialContext ctx = new InitialContext();
             DataSource ds = (DataSource) ctx.lookup(this.getDatasourceName());
-            Connection conn = ds.getConnection();
-            Statement stmt = conn.createStatement();
+            conn = ds.getConnection();
+            stmt = conn.createStatement();
             stmt.execute(insertSQL);
             conn.close();
 
@@ -128,6 +130,17 @@ public class OAuth2Server extends HttpServlet {
             ErrorReturn err = new ErrorReturn();
             err.setErrorType(ErrorReturn.ErrorType.ERROR_UNAUTHORIZED_CLIENT);
             err.writeError(response, HttpServletResponse.SC_UNAUTHORIZED);
+        } finally {
+            if( stmt != null ) {
+                try {
+                    stmt.close();
+                } catch(SQLException e) {}
+            }
+            if( conn != null ) {
+                try {
+                    conn.close();
+                } catch (SQLException ex) {}
+            }
         }
     }
 
