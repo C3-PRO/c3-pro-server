@@ -192,7 +192,7 @@ And the corresponding variables in *configuration.properties* would look like:
     
 To obtain acess keys and secrets from AWS, visit http://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSGettingStartedGuide/AWSCredentials.html. We suggest to create a user in AWS-IAM with only permissions to access S3 and SQS, and generate the access key and secret for this user.
 
-## Update public key ##
+## Providing public key ##
 
 The system uses a public key uploaded in the S3 bucket to encrypt the symmetric key used to encrypt the resources in the SQS. The name of the public key file is specified in *configuration.propeties* file:
 
