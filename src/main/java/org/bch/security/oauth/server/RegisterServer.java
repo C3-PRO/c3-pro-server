@@ -195,6 +195,8 @@ public class RegisterServer extends HttpServlet {
      */
     protected boolean validateAppleReceipt(String receipt) throws Exception {
         log.info("Validating Apple Receipt");
+        log.info("RECEIPT:");
+        log.info(receipt);
         String jsonReq = String.format(JSON_REQUEST_APPLE, receipt);
         URL url = new URL(APPLE_ENDPOINT);
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
