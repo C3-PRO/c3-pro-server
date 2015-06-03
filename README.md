@@ -92,7 +92,9 @@ insert into AntiSpamToken (token) values ('{{the_token_hashed_with_sha1}}');
 
 3. Deploy the provided oracle jdbc driver in jBoss:
 
+
     cp ojdbc14.jar $JBOSS_HOME/standalone/deployments
+
 
 4. Configure the data source by editing the file *$JBOSS_HOME/standalone/configuration/standalone.xml*. In the data source section place the following:
 
