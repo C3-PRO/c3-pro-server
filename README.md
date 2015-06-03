@@ -49,4 +49,4 @@ The registration phase should be called only once per device. Once the device is
 
 The Bearer token can be used in the rest calls that serve FHIR resources as authorization credentials.
 
-### AWS prerequisits ###
+## AWS prerequisits ##
