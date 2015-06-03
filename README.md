@@ -91,11 +91,12 @@ insert into AntiSpamToken (token) values ('{{the_token_hashed_with_sha1}}');
 
 * Deploy the provided oracle jdbc driver in jBoss:
 
-    $HOME_C3PRO/cp ojdbc14.jar $JBOSS_HOME/standalone/deployments
-
+```
+#!shell
+$HOME_C3PRO/cp ojdbc14.jar $JBOSS_HOME/standalone/deployments
+```
 
 * Configure the data source by editing the file *$JBOSS_HOME/standalone/configuration/standalone.xml*. In the data source section place the following:
-
 
 ```
 #!xml
@@ -110,7 +111,7 @@ insert into AntiSpamToken (token) values ('{{the_token_hashed_with_sha1}}');
 </datasource>
 ```
 
-5. Configure OAuth2LoginModule by editing the file *$JBOSS_HOME/standalone/configuration/standalone.xml*, and adding the following in the security-domains section:
+* Configure OAuth2LoginModule by editing the file *$JBOSS_HOME/standalone/configuration/standalone.xml*, and adding the following in the security-domains section:
 
 
 ```
