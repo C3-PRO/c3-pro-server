@@ -1,6 +1,6 @@
 # C3-PRO-Server #
 
-C3-PRO-Server is a highly reliable and scalable FHIR DSTU2 compliant web server, designed to cope with the traffic from mobile apps. The current version can only be deployed in AWS. It populates an AWS SQS with the FHIR resources that are POST. It does not consume the queue. A consumer can be found in the project [c3pro-consumer] (https://bitbucket.org/ipinyol/c3pro-server)
+C3-PRO-Server is a highly reliable and scalable FHIR DSTU2 compliant web server, designed to cope with the traffic from mobile apps. The current version can only be deployed in AWS. It populates an AWS SQS with the FHIR resources that are POST. It does not consume the queue. A consumer can be found in the project [c3pro-consumer] (https://bitbucket.org/ipinyol/c3pro-consumer)
 
 The system servers the following rest methods:
 
@@ -189,4 +189,12 @@ And the corresponding variables in *configuration.properties* would look like:
     app.aws.sqs.profile=sqsprofile    
     app.aws.s3.profile=s3profile
     
-To obtain acess keys and secrets from AWS, visit (http://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSGettingStartedGuide/AWSCredentials.html). We suggest to create a user using in IAM with only permissions to access S3 and SQS and generate the access key and secret for this user.
+To obtain acess keys and secrets from AWS, visit http://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSGettingStartedGuide/AWSCredentials.html. We suggest to create a user in AWS-IAM with only permissions to access S3 and SQS, and generate the access key and secret for this user.
+
+## Update public key ##
+
+The system uses a public key uploaded in the S3 bucket to encrypt the symmetric key used to encrypt the resources in the SQS. The name of the public key file is specified in *configuration.propeties* file:
+
+    app.security.publickey=public-c3pro.der
+
+This name must match with an existing file in the used S3 bucket. The public key comes from the consumer. See https://bitbucket.org/ipinyol/c3pro-consumer to see how to generate public-private keys.
