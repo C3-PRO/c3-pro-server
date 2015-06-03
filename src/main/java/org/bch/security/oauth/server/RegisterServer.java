@@ -112,6 +112,7 @@ public class RegisterServer extends HttpServlet {
 
         // If no validation, the request is not authorized
         if (!validationOK) {
+            log.warn("Apple receipt not valid");
             ErrorReturn err = new ErrorReturn();
             err.setErrorType(ErrorReturn.ErrorType.ERROR_UNAUTHORIZED_CLIENT);
             err.setErrorDesc("Apple receipt not valid");
