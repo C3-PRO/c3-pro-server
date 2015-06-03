@@ -161,3 +161,32 @@ In PROD:
     mvn jboss-as:deploy
 
 These commands take the resource files located in *src/main/resources/qa* or *src/main/resources/prod* respectively, and place them as the resource files of the deployment.
+
+## Notes on AWS SDK usage ##
+
+The system uses the Java SDK provided by Amazon. The SDK will be installed automatically since it is a maven dependency. However, it grabs the credentials to access the S3 bucket and SQS from a file that should be located here:
+
+    $HOME/.aws/credentials
+
+The content of the file should be something like:
+
+    [sqsqueue]
+    aws_access_key_id={{access_key_to_SQS_and_S3}}
+    aws_secret_access_key={{secret}}
+
+The default configuration uses the same profile to connect to S3 and SQS. This is specified in *configuration.properties* file. If you want to use different profiles, the *credentials* file should look like:
+
+    [sqsprofile]
+    aws_access_key_id={{access_key_to_SQS}}
+    aws_secret_access_key={{secret_SQS}}
+
+    [s3profile]
+    aws_access_key_id={{access_key_to_S3}}
+    aws_secret_access_key={{secret_S3}}
+
+And the corresponding variables in *configuration.properties* would look like:
+
+    app.aws.sqs.profile=sqsprofile    
+    app.aws.s3.profile=s3profile
+    
+To obtain acess keys and secrets from AWS, visit (http://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSGettingStartedGuide/AWSCredentials.html). We suggest to create a user using in IAM with only permissions to access S3 and SQS and generate the access key and secret for this user.
