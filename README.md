@@ -49,4 +49,43 @@ The registration phase should be called only once per device. Once the device is
 
 The Bearer token can be used in the rest calls that serve FHIR resources as authorization credentials.
 
-## AWS prerequisits ##
+# Configuration and Deployment #
+
+## AWS prerequisites ##
+
+The following services must be deployed in AWS:
+
+* **S3 bucket**: The system uses an S3 bucket to serve static content like Questionnaire resources and to store the public key of the Consumer
+* **SQS queue**: A queue to store the pushed FHIR resources
+* **Oracle RDS DB**: the system uses an oracle schema to manage credentials. Technically, it is not necessary to use a db schema deployed in AWS, but is highly recommended.
+
+The access to S3 and SQS can be configured in the {{config.properties}} of each resource directories (dev, qa and prod). The access to the oracle DB must be configured as a datasource in the jboss {{standalone.xml}} file. See below.
+
+## Installing Maven, Java && JBoss AS7 ##
+
+The system uses java 7 and we recommend to use JBoss AS7. To install the basic tools in a Debian-based Linux distribution:
+
+    sudo apt-get clean
+    sudo apt-get update
+    sudo apt-get install openjdk-7-jdk
+    sudo apt-get install unzip
+    sudo apt-get install maven
+    wget http://download.jboss.org/jbossas/7.1/jboss-as-7.1.1.Final/jboss-as-7.1.1.Final.zip
+    sudo unzip jboss-as-7.1.1.Final.zip -d /usr/share/
+    sudo chown -fR {{you_chosen_user}}:{{you_chosen_user}} /usr/share/jboss-as-7.1.1.Final/
+
+## Oracle DB configuration ##
+
+the systems uses an oracle DB to manage credentials and bearer token. Here are the steps to configure the DB properly:
+
+1. Run the table creation script: {{src/main/scripts/create_tables.sql}} in the DB
+2. Insert an antispam token:
+    
+    insert into AntiSpamToken (token) values ('{{the_token_hashed_with_sha1}}');
+
+  To generate sha1 hashed token execute the script: {{src/main/scripts/generate_hashed_token.sql}} replacing {{"REPLACE by a high entropy token"}} by the desired anti spam token. 
+
+
+
+
+
