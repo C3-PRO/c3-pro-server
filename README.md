@@ -74,9 +74,10 @@ The system uses java 7 and we recommend to use JBoss AS7. To install the basic t
     sudo unzip jboss-as-7.1.1.Final.zip -d /usr/share/
     sudo chown -fR {{you_chosen_user}}:{{you_chosen_user}} /usr/share/jboss-as-7.1.1.Final/
 
+
 ## Oracle DB configuration ##
 
-the systems uses an oracle DB to manage credentials and bearer token. Here are the steps to configure the DB properly:
+The systems uses an oracle DB to manage credentials and bearer token. Here are the steps to configure the DB properly:
 
 1. Run the table creation script: *{{src/main/scripts/create_tables.sql}}* in the DB
 2. Insert an antispam token:
@@ -109,7 +110,7 @@ insert into AntiSpamToken (token) values ('{{the_token_hashed_with_sha1}}');
 </datasource>
 ```
 
-5.- Configure OAuth2LoginModule by editing the file *$JBOSS_HOME/standalone/configuration/standalone.xml*, and adding the following in the security-domains section:
+5. Configure OAuth2LoginModule by editing the file *$JBOSS_HOME/standalone/configuration/standalone.xml*, and adding the following in the security-domains section:
 
 
 ```
@@ -130,3 +131,33 @@ insert into AntiSpamToken (token) values ('{{the_token_hashed_with_sha1}}');
     </authentication>
 </security-domain>
 ```
+
+## Building and deploying for development environment ##
+
+Once the project is cloned or download, in the root of the project:
+
+    mvn clean package
+    mvn jboss-as:deploy
+
+The previous instructions take the resource files located in *src/main/resources/dev* and place them as the resource files of the deployment. This requires JBoss on:
+
+    $JBOSS_HOME/bin/standalone.sh
+
+To stop JBoss:
+
+    $JBOSS_HOME/bin/jboss-cli.sh --connect command=:shutdown
+
+
+## Building in QA and PROD environment ##
+
+In QA:
+
+    mvn clean package -Pqa
+    mvn jboss-as:deploy
+
+In PROD:
+
+    mvn clean package -Pprod
+    mvn jboss-as:deploy
+
+These commands take the resource files located in *src/main/resources/qa* or *src/main/resources/prod* respectively, and place them as the resource files of the deployment.
