@@ -45,6 +45,8 @@ public class AppConfig {
     public static String SECURITY_ENCRYPTION_ENABLED =  "app.security.encryption.enabled";
 
     public static String APP_IOS_ID =                   "app.ios.id";
+    public static String APP_IOS_VERIF_ENDPOINT =       "app.ios.verification.endpoint";
+
     private static Properties prop = new Properties();
     /**
      * Upload the configuration from config.properties files

@@ -51,7 +51,7 @@ public class RegisterServer extends HttpServlet {
     protected static final String USER_ROLES = "AppUser";
     protected static final String CONTENT_TYPE = "application/json";
 
-    protected static final String APPLE_ENDPOINT = "https://sandbox.itunes.apple.com/verifyReceipt";
+    //protected static final String APPLE_ENDPOINT = "https://sandbox.itunes.apple.com/verifyReceipt";
 
     protected static final String APPLE_JSON_KEY_STATUS = "status";
     protected static final String APPLE_JSON_KEY_RECEIPT = "receipt";
@@ -205,7 +205,7 @@ public class RegisterServer extends HttpServlet {
         log.info(receipt);
         if (receipt.equals("NO-APP-RECEIPT")) return true;
         String jsonReq = String.format(JSON_REQUEST_APPLE, receipt);
-        URL url = new URL(APPLE_ENDPOINT);
+        URL url = new URL(AppConfig.getProp(AppConfig.APP_IOS_VERIF_ENDPOINT));
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
         con.setRequestMethod("POST");
         con.setDoOutput(true);
@@ -229,9 +229,15 @@ public class RegisterServer extends HttpServlet {
         boolean ret = false;
         if (status == 0) {
             JSONObject receiptJSON = jsonRet.getJSONObject(APPLE_JSON_KEY_RECEIPT);
-            String bid = receiptJSON.getString(APPLE_JSON_KEY_RECEIPT_BID);
-            log.info("BID:" + bid);
-            ret = bid.trim().toLowerCase().equals(this.getAppId().trim().toLowerCase());
+            String bid=null;
+            try {
+                bid = receiptJSON.getString(APPLE_JSON_KEY_RECEIPT_BID);
+                log.info("BID:" + bid);
+                ret = bid.trim().toLowerCase().equals(this.getAppId().trim().toLowerCase());
+            } catch (JSONException e) {
+                log.warn(APPLE_JSON_KEY_RECEIPT_BID + " json field not found");
+                ret = AppConfig.getProp(AppConfig.APP_IOS_VERIF_ENDPOINT).contains("sandbox");
+            }
             if (ret) {
                 log.info("Receipt validated against Apple servers");
             } else {
