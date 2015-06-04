@@ -243,6 +243,8 @@ public class RegisterServer extends HttpServlet {
             } else {
                 log.warn("Receipt status 0, but iOS app id not valid:" + bid);
             }
+        } else {
+            log.info("Apple receipt status:" + status);
         }
         return ret;
     }
