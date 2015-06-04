@@ -56,6 +56,7 @@ public class RegisterServer extends HttpServlet {
     protected static final String APPLE_JSON_KEY_STATUS = "status";
     protected static final String APPLE_JSON_KEY_RECEIPT = "receipt";
     protected static final String APPLE_JSON_KEY_RECEIPT_BID = "bid";
+    protected static final String APPLE_JSON_KEY_BUNDLE = "bundle_id";
 
     protected static final String JSON_REQUEST_APPLE =
             "{\n" +
@@ -231,11 +232,10 @@ public class RegisterServer extends HttpServlet {
             JSONObject receiptJSON = jsonRet.getJSONObject(APPLE_JSON_KEY_RECEIPT);
             String bid=null;
             try {
-                bid = receiptJSON.getString(APPLE_JSON_KEY_RECEIPT_BID);
-                log.info("BID:" + bid);
+                bid = receiptJSON.getString(APPLE_JSON_KEY_BUNDLE);
                 ret = bid.trim().toLowerCase().equals(this.getAppId().trim().toLowerCase());
             } catch (JSONException e) {
-                log.warn(APPLE_JSON_KEY_RECEIPT_BID + " json field not found");
+                log.warn(APPLE_JSON_KEY_BUNDLE + " json field not found");
                 ret = AppConfig.getProp(AppConfig.APP_IOS_VERIF_ENDPOINT).contains("sandbox");
             }
             if (ret) {
