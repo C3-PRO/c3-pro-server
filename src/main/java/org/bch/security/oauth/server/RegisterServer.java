@@ -98,11 +98,13 @@ public class RegisterServer extends HttpServlet {
                 validationOK = validateAppleReceipt(receipt);
             }
         } catch (JSONException e) {
+            log.error(e.getMessage());
             ErrorReturn err = new ErrorReturn();
             err.setErrorType(ErrorReturn.ErrorType.ERROR_INVALID_REQUEST);
             err.writeError(response, HttpServletResponse.SC_BAD_REQUEST);
             return;
         } catch (Exception e) {
+            log.error(e.getMessage());
             ErrorReturn err = new ErrorReturn();
             err.setErrorType(ErrorReturn.ErrorType.ERROR_INVALID_REQUEST);
             err.setErrorDesc(e.getMessage());
@@ -118,6 +120,8 @@ public class RegisterServer extends HttpServlet {
             err.setErrorDesc("Apple receipt not valid");
             err.writeError(response, HttpServletResponse.SC_UNAUTHORIZED);
             return;
+        } else {
+            log.info("Apple receipt validated");
         }
 
         // At this point the request is authorized. We generate the credentials
@@ -136,6 +140,7 @@ public class RegisterServer extends HttpServlet {
             stmt.execute(insert);
             stmt.execute(insertRoles);
         } catch (Exception e) {
+            log.error(e.getMessage());
             ErrorReturn err = new ErrorReturn();
             err.setErrorType(ErrorReturn.ErrorType.ERROR_INVALID_REQUEST);
             err.setErrorDesc(e.getMessage());
