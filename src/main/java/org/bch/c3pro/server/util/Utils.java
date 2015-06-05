@@ -1,9 +1,8 @@
 package org.bch.c3pro.server.util;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -57,5 +56,23 @@ public class Utils {
         c.add(Calendar.DATE, -days);
         dateWindow.setTime(c.getTime().getTime());
         return dateWindow;
+    }
+
+    public static String getPostContent(HttpServletRequest request) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        BufferedReader reader = request.getReader();
+        String line=null;
+        while((line = reader.readLine()) != null) {
+            sb.append(line);
+        }
+        return sb.toString();
+    }
+
+    public static void sendJSONError(HttpServletResponse response, String msg, int code) throws IOException {
+        response.setContentType("application/json");
+        PrintWriter out = response.getWriter();
+        out.write("{'error':'" + msg + "'}");
+        out.flush();
+        response.setStatus(code);
     }
 }

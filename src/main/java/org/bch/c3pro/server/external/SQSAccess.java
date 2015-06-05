@@ -38,7 +38,7 @@ public class SQSAccess implements Queue {
     }
 
     @Override
-    public void sendMessageEncrypted(String resource, PublicKey publicKey) throws C3PROException {
+    public void sendMessageEncrypted(String resource, PublicKey publicKey, String UUIDKey) throws C3PROException {
 
         setCredentials();
 
@@ -48,8 +48,6 @@ public class SQSAccess implements Queue {
         byte []encKeyToSend = null;
         byte []encResource = null;
         Cipher cipher;
-        String encMessageStr = null;
-        String encKeyToSendStr = null;
         try {
             // We encrypt the symetric key using the public available key
             int size = Integer.parseInt(AppConfig.getProp(AppConfig.SECURITY_PRIVATEKEY_SIZE));
@@ -59,7 +57,8 @@ public class SQSAccess implements Queue {
 
             // We encrypt the message
             cipher = Cipher.getInstance(AppConfig.getProp(AppConfig.SECURITY_PRIVATEKEY_ALG));
-            //cipher.init(Cipher.ENCRYPT_MODE, symetricKey, iv);
+
+            //cipher.init(Cipher.ENCRYPT_MODE, symmetricKey, iv);
             cipher.init(Cipher.ENCRYPT_MODE, symetricKey, new IvParameterSpec(new byte[size]));
             encResource = cipher.doFinal(resource.getBytes(AppConfig.UTF));
         } catch (UnsupportedEncodingException e) {
@@ -70,18 +69,31 @@ public class SQSAccess implements Queue {
             throw new C3PROException(e.getMessage(), e);
         }
 
-        // We send the encrypted message to the Queue. We Base64 encode it
-        SendMessageRequest mse = new SendMessageRequest(
-                AppConfig.getProp(AppConfig.AWS_SQS_URL),
-                Base64.encodeBase64String(encResource));
+        pushMessage(Base64.encodeBase64String(encResource), Base64.encodeBase64String(encKeyToSend), UUIDKey);
 
+    }
+
+    private void pushMessage(String msg, String key, String uuid) throws C3PROException{
+        setCredentials();
+        // We send the encrypted message to the Queue. We Base64 encode it
+        SendMessageRequest mse = new SendMessageRequest(AppConfig.getProp(AppConfig.AWS_SQS_URL), msg);
+
+        // Add SQS Elem metadata: encrypted symmetric key
         MessageAttributeValue atr = new MessageAttributeValue();
-        atr.setStringValue(Base64.encodeBase64String(encKeyToSend));
+        atr.setStringValue(key);
         atr.setDataType("String");
         mse.addMessageAttributesEntry(AppConfig.getProp(AppConfig.SECURITY_METADATAKEY), atr);
+
+        // Add SQS Elem metadata: public key uuid
+        atr = new MessageAttributeValue();
+        atr.setStringValue(uuid);
+        atr.setDataType("String");
+        mse.addMessageAttributesEntry(AppConfig.getProp(AppConfig.SECURITY_METADATAKEYID), atr);
+
         try {
             this.sqs.sendMessage(mse);
         } catch (Exception e) {
+            e.printStackTrace();
             throw new C3PROException(e.getMessage(), e);
         }
 
@@ -113,6 +125,10 @@ public class SQSAccess implements Queue {
             throw new C3PROException(e.getMessage(), e);
         }
         return out;
+    }
+
+    public void sendMessageAlreadyEncrypted(String resource, String key, String UUIDKey) throws C3PROException {
+        pushMessage(resource, key, UUIDKey);
     }
 
     private void setCredentials() throws C3PROException {

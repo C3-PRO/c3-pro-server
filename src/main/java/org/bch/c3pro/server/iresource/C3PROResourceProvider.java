@@ -38,16 +38,18 @@ public abstract class C3PROResourceProvider {
                 sqs.sendMessage(message);
             } else {
                 byte [] publicKeyBin = null;
+                String publicKeyUUID = null;
                 try {
                     publicKeyBin = this.s3.getBinary(AppConfig.getProp(AppConfig.SECURITY_PUBLICKEY));
+                    publicKeyUUID = this.s3.get(AppConfig.getProp(AppConfig.SECURITY_PUBLICKEY_ID));
                 } catch (C3PROException e) {
                     log.error(e.getMessage());
-                    new InternalErrorException("Error reading public key from AWS S3", e);
+                    new InternalErrorException("Error reading public key or public key uuid from AWS S3", e);
                 }
                 X509EncodedKeySpec publicSpec = new X509EncodedKeySpec(publicKeyBin);
                 KeyFactory keyFactory = KeyFactory.getInstance(AppConfig.getProp(AppConfig.SECURITY_PUBLICKEY_BASEALG));
                 PublicKey publicKey = keyFactory.generatePublic(publicSpec);
-                sqs.sendMessageEncrypted(message, publicKey);
+                sqs.sendMessageEncrypted(message, publicKey, publicKeyUUID);
             }
         } catch (Exception e) {
             e.printStackTrace();

@@ -9,5 +9,6 @@ import java.security.PublicKey;
  */
 public interface Queue {
     public void sendMessage(String resource) throws C3PROException;
-    public void sendMessageEncrypted(String resource, PublicKey key) throws C3PROException;
+    public void sendMessageEncrypted(String resource, PublicKey key, String UUIDKey) throws C3PROException;
+    public void sendMessageAlreadyEncrypted(String resource, String key, String UUIDKey) throws C3PROException;
 }

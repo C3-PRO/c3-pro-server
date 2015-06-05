@@ -48,6 +48,19 @@
         </javaee:init-param>
     </javaee:servlet>
 
+    <!--FHIR Enc Servlet -->
+    <javaee:servlet>
+        <javaee:servlet-name>fhir_enc</javaee:servlet-name>
+        <javaee:servlet-class>org.bch.c3pro.server.servlet.FHIREncServlet</javaee:servlet-class>
+    </javaee:servlet>
+
+    <!--Mappings -->
+    <javaee:servlet-mapping>
+        <javaee:servlet-name>fhir_enc</javaee:servlet-name>
+        <javaee:url-pattern>/encfhir/QuestionnaireAnswer</javaee:url-pattern>
+        <javaee:url-pattern>/encfhir/Contract</javaee:url-pattern>
+    </javaee:servlet-mapping>
+
     <javaee:servlet-mapping>
       <javaee:servlet-name>fhir</javaee:servlet-name>
       <javaee:url-pattern>/fhir/*</javaee:url-pattern>
@@ -75,11 +88,12 @@
         <javaee:filter-class>org.bch.security.oauth.server.OAuthServerFilter</javaee:filter-class>
     </javaee:filter>
 
-    <!--Web resources indicated here will be protected through oauth2 -->
+    <!--Web resources listed here will be protected through oauth2 -->
     <javaee:filter-mapping>
         <javaee:filter-name>OAuthFilter</javaee:filter-name>
         <javaee:url-pattern>/rest/*</javaee:url-pattern>
         <javaee:url-pattern>/fhir/*</javaee:url-pattern>
+        <javaee:url-pattern>/encfhir/*</javaee:url-pattern>
     </javaee:filter-mapping>
 
     <!--OAuth Authorization server is protected though a special filter -->

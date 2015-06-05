@@ -26,12 +26,14 @@ public class AppConfig {
     public static String AWS_S3_BUCKET_NAME =       "app.aws.s3.bucket";
     public static String AWS_S3_REGION =            "app.aws.s3.region";
 
-    // The name of the public key file found in the S3 bucket
+    // The name of the public key file found in the S3 bucket and its uuid
     public static String SECURITY_PUBLICKEY =       "app.security.publickey";
+    public static String SECURITY_PUBLICKEY_ID =       "app.security.publickey.id";
 
     // The key posted in the metadata part of the message to SQS. The value will containt th encrypted symetric key
     // to decrypt the message
     public static String SECURITY_METADATAKEY =     "app.security.metadatakey";
+    public static String SECURITY_METADATAKEYID =   "app.security.metadatakeyid";
 
     public static String SECURITY_PRIVATEKEY_ALG =      "app.security.secretkey.algorithm";
     public static String SECURITY_PRIVATEKEY_BASEALG =  "app.security.secretkey.basealgorithm";

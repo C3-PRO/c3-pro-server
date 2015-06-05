@@ -4,6 +4,7 @@ import com.amazonaws.services.route53.model.ResourceRecordSet;
 import org.apache.axiom.om.util.Base64;
 import org.bch.c3pro.server.config.AppConfig;
 import org.bch.c3pro.server.exception.C3PROException;
+import org.bch.c3pro.server.util.Utils;
 import org.jboss.security.auth.spi.Util;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -86,7 +87,7 @@ public class RegisterServer extends HttpServlet {
         }
 
         // We read the content and validate the receipt
-        String jsonPost = getPostContent(request);
+        String jsonPost = Utils.getPostContent(request);
         JSONObject json=null;
         try {
             json = new JSONObject(jsonPost);
@@ -292,16 +293,6 @@ public class RegisterServer extends HttpServlet {
                 } catch (SQLException ex) {}
             }
         }
-    }
-
-    private String getPostContent(HttpServletRequest request) throws IOException {
-        StringBuilder sb = new StringBuilder();
-        BufferedReader reader = request.getReader();
-        String line=null;
-        while((line = reader.readLine()) != null) {
-            sb.append(line);
-        }
-        return sb.toString();
     }
 
     /**
