@@ -199,3 +199,9 @@ The system uses a public key uploaded in the S3 bucket to encrypt the symmetric 
     app.security.publickey=public-c3pro.der
 
 This name must match with an existing file in the used S3 bucket. The public key comes from the consumer. See https://bitbucket.org/ipinyol/c3pro-consumer to see how to generate public-private keys.
+
+### Support for multiple public-private keys ###
+
+In this new version, public keys have associated an ID. This ID will be pushed along with the message in the SQS as a metadata, and will be used by the consumer to distinguish between different possible keys. The ID should be an UUID specified in a file stored in the S3 bucket. The name of the file is configurable in *configuration.propeties* and it's currently set as follows:
+
+    app.security.publickey.id=public-c3pro.der.uuid
