@@ -138,6 +138,7 @@ public class SQSAccess implements Queue {
                 System.setProperty("aws.profile", AppConfig.getProp(AppConfig.AWS_SQS_PROFILE));
                 credentials = new ProfileCredentialsProvider().getCredentials();
             } catch (Exception e) {
+                e.printStackTrace();
                 throw new C3PROException(
                         "Cannot load the credentials from the credential profiles file. " +
                                 "Please make sure that the credentials file is at the correct " +
