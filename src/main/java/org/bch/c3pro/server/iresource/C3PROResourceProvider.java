@@ -44,7 +44,7 @@ public abstract class C3PROResourceProvider {
                     publicKeyUUID = this.s3.get(AppConfig.getProp(AppConfig.SECURITY_PUBLICKEY_ID));
                 } catch (C3PROException e) {
                     log.error(e.getMessage());
-                    new InternalErrorException("Error reading public key or public key uuid from AWS S3", e);
+                    throw new InternalErrorException("Error reading public key or public key uuid from AWS S3", e);
                 }
                 X509EncodedKeySpec publicSpec = new X509EncodedKeySpec(publicKeyBin);
                 KeyFactory keyFactory = KeyFactory.getInstance(AppConfig.getProp(AppConfig.SECURITY_PUBLICKEY_BASEALG));
@@ -53,7 +53,7 @@ public abstract class C3PROResourceProvider {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            new InternalErrorException("Error sending message to Queue", e);
+            throw new InternalErrorException("Error sending message to Queue", e);
         }
     }
 
@@ -63,7 +63,7 @@ public abstract class C3PROResourceProvider {
         try {
             this.s3.put(key, value);
         } catch (C3PROException e) {
-            new InternalErrorException("Error writing resource to AWS S3", e);
+            throw new InternalErrorException("Error writing resource to AWS S3", e);
         }
     }
 
@@ -75,7 +75,7 @@ public abstract class C3PROResourceProvider {
         try {
             value = this.s3.get(key);
         } catch (C3PROException e) {
-            new InternalErrorException("Error reading resource from AWS S3", e);
+            throw new InternalErrorException("Error reading resource from AWS S3", e);
         }
         IParser parser = ctx.newJsonParser();
         BaseResource baseResource = parser.parseResource(getResourceClass(), value);
