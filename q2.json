@@ -1,5 +1,4 @@
 {
-    "resource":{
         "resourceType":"Questionnaire",
         "id":"example-loinc",
         "meta":{
@@ -1131,8 +1130,4 @@
                 }
             ]
         }
-    },
-    "search":{
-        "mode":"match"
-    }
 }

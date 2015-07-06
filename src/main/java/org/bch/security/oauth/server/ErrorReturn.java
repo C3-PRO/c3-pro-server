@@ -83,9 +83,9 @@ public class ErrorReturn {
         String message = this.toString();
         response.setContentType("application/json");
         PrintWriter out = response.getWriter();
+        response.setStatus(errorCode);
         out.write(message);
         out.flush();
-        response.setStatus(errorCode);
     }
 
 }
