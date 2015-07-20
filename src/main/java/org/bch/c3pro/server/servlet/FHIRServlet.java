@@ -3,10 +3,7 @@ package org.bch.c3pro.server.servlet;
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 import ca.uhn.fhir.rest.server.RestfulServer;
-import org.bch.c3pro.server.iresource.ConsentResourceProvider;
-import org.bch.c3pro.server.iresource.PatientResourceProvider;
-import org.bch.c3pro.server.iresource.QuestionnaireResourceProvider;
-import org.bch.c3pro.server.iresource.QuestionnaireAnswerResourceProvider;
+import org.bch.c3pro.server.iresource.*;
 
 import javax.servlet.ServletException;
 import java.util.ArrayList;
@@ -32,6 +29,7 @@ public class FHIRServlet extends RestfulServer {
         resourceProviders.add(new QuestionnaireResourceProvider());
 	    resourceProviders.add(new QuestionnaireAnswerResourceProvider());
         resourceProviders.add(new ConsentResourceProvider());
+        resourceProviders.add(new ObservationResourceProvider());
         setResourceProviders(resourceProviders);
         setUseBrowserFriendlyContentTypes(true);
     }
