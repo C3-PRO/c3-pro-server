@@ -16,6 +16,12 @@
       <javaee:servlet-class>org.bch.c3pro.server.servlet.FHIRServlet</javaee:servlet-class>
     </javaee:servlet>
 
+    <javaee:servlet>
+        <javaee:servlet-name>map</javaee:servlet-name>
+        <javaee:servlet-class>org.bch.c3pro.server.servlet.USMap</javaee:servlet-class>
+    </javaee:servlet>
+
+
     <!--RegisterServer configuration -->
     <javaee:servlet>
         <javaee:servlet-name>register</javaee:servlet-name>
@@ -64,6 +70,11 @@
     <javaee:servlet-mapping>
       <javaee:servlet-name>fhir</javaee:servlet-name>
       <javaee:url-pattern>/fhir/*</javaee:url-pattern>
+    </javaee:servlet-mapping>
+
+    <javaee:servlet-mapping>
+        <javaee:servlet-name>map</javaee:servlet-name>
+        <javaee:url-pattern>/map</javaee:url-pattern>
     </javaee:servlet-mapping>
 
     <javaee:servlet-mapping>

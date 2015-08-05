@@ -338,15 +338,4 @@
         </outbound-socket-binding>
     </socket-binding-group>
 
-    <deployments>
-        <deployment name="i2me2-core.war" runtime-name="i2me2-core.war">
-            <content sha1="b292da4d77e574356846ec5e247e7a8076a63a1d"/>
-        </deployment>
-        <deployment name="c3pro-server.war" runtime-name="c3pro-server.war">
-            <content sha1="0cb55476abd04dbadc09cb8392eaa1e3ee39d303"/>
-        </deployment>
-        <deployment name="c3pro-consumer.war" runtime-name="c3pro-consumer.war">
-            <content sha1="50af3a6a0b9cde8f01a0288ef5885f92006dc3c4"/>
-        </deployment>
-    </deployments>
 </server>
