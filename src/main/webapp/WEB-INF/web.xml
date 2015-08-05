@@ -74,7 +74,7 @@
 
     <javaee:servlet-mapping>
         <javaee:servlet-name>map</javaee:servlet-name>
-        <javaee:url-pattern>/map</javaee:url-pattern>
+        <javaee:url-pattern>/map.svg</javaee:url-pattern>
     </javaee:servlet-mapping>
 
     <javaee:servlet-mapping>
