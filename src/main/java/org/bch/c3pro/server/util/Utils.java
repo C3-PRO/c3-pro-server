@@ -43,7 +43,6 @@ public class Utils {
     "colorado",
     "connecticut",
     "delaware",
-    "district of columbia",
     "florida",
     "georgia",
     "hawaii",
