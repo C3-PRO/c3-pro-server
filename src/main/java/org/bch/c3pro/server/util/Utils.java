@@ -28,20 +28,23 @@ public class Utils {
      * @param sep       The line sepparator
      * @throws Exception
      */
+    public static final String [] US_STATES = {"AL","AK","AZ","AR","CA","CO","CT","DE","FL","GA","HI","ID","IL","IN",
+            "IA","KS","KY","LA","ME","MD","MA","MI","MN","MS","MO","MT","NE","NV","NH","NJ","NM","NY","NC","ND","OH",
+            "OK","OR","PA","RI","SC","SD","TN","TX","UT","VT","VA","WA","WV","WI","WY"};
 
     public static final String TOTAL_LABEL = "TOTAL";
 
     public static void textFileToStringBuffer(Class cl, String fileName, StringBuffer sb, String sep)
-            throws IOException {
+throws IOException {
         InputStream in = cl.getResourceAsStream(fileName);
         BufferedReader br = new BufferedReader(new InputStreamReader(in));
         String line;
         try {
-            while ((line = br.readLine()) != null) {
-                sb.append(line).append(sep);
-            }
+while ((line = br.readLine()) != null) {
+    sb.append(line).append(sep);
+}
         } finally {
-            in.close();
+in.close();
         }
     }
 
@@ -52,27 +55,27 @@ public class Utils {
         String jsonContent = s3.get(filename);
         state = state.toUpperCase();
         try {
-            JSONObject json = new JSONObject(jsonContent);
-            if (json.has(state)) {
-                // update the count by the state
-                long count = json.getLong(state);
-                count = count + num;
-                json.remove(state);
-                json.put(state, count);
+JSONObject json = new JSONObject(jsonContent);
+if (json.has(state)) {
+    // update the count by the state
+    long count = json.getLong(state);
+    count = count + num;
+    json.remove(state);
+    json.put(state, count);
 
-                // update the total count
-                long total = json.getLong(TOTAL_LABEL);
-                total = total + num;
-                json.remove(TOTAL_LABEL);
-                json.put(TOTAL_LABEL, total);
+    // update the total count
+    long total = json.getLong(TOTAL_LABEL);
+    total = total + num;
+    json.remove(TOTAL_LABEL);
+    json.put(TOTAL_LABEL, total);
 
-                // update the bucket
-                s3.put(filename, json.toString());
-            } else {
-                throw new C3PROException("State " + state + " is not a valid US state");
-            }
+    // update the bucket
+    s3.put(filename, json.toString());
+} else {
+    throw new C3PROException("State " + state + " is not a valid US state");
+}
         } catch (JSONException e) {
-            e.printStackTrace();
+e.printStackTrace();
         }
     }
 
@@ -82,8 +85,8 @@ public class Utils {
         sb.append("://");
         sb.append(host);
         if (!port.trim().equals("")) {
-            sb.append(":");
-            sb.append(port);
+sb.append(":");
+sb.append(port);
         }
         sb.append(endpoint);
         return sb.toString();
@@ -103,7 +106,7 @@ public class Utils {
         BufferedReader reader = request.getReader();
         String line=null;
         while((line = reader.readLine()) != null) {
-            sb.append(line);
+sb.append(line);
         }
         return sb.toString();
     }

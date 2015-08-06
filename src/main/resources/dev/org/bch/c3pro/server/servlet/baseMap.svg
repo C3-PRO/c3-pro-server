@@ -85,35 +85,7 @@
 	fill:  #FFFFFF;
  }
 
- /* 1%+ */
- .q1, .dc, .ga, .hi, .in, .md, .mn, .mo, .ne, .nv, .oh, .ok, .ri, .tn, .va
- {
-	fill: #99D6AD;
- }
-
- /* 5%+ #99D6AD */
- .q5, .az, .ct, .il, .ma, .mi, .nc, .nj, .or, .pa, .pr, .ut, .wa, .wi
- {
-	fill: #4DB870;
- }
-
- /* 10%+  */
- .q20, .ca, .fl, .ny, .tx
- {
-	fill: #009933;
- }
-
- /* 20%+ lots */
- .q100
- {
-	fill: 006B24;
- }
-
- /* No deaths */
- .xx, .ak, .al, .ar, .co, .de, .ia, .id, .ks, .ky, .la, .me, .ms, .mt, .nd, .nh, .nm, .sc, .sd, .vi, .vt, .wv, .wy
- {
-	fill: #E6F5EB; /* soft green */
- }
+/*REPLACE_BY_C3PRO_CSS*/
 
 /*
  * land
