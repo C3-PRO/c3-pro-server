@@ -119,7 +119,7 @@ throws IOException {
         stateAbbr = stateAbbr.toUpperCase();
         try {
             JSONObject json = new JSONObject(jsonContent);
-            if (json.has(state)) {
+            if (json.has(stateAbbr)) {
                 // update the count by the state
                 long count = json.getLong(stateAbbr);
                 count = count + num;
