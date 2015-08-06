@@ -1,6 +1,7 @@
 package org.bch.c3pro.server.iresource;
 
 import ca.uhn.fhir.model.api.ResourceMetadataKeyEnum;
+import ca.uhn.fhir.model.dstu2.composite.AddressDt;
 import ca.uhn.fhir.model.dstu2.composite.HumanNameDt;
 import ca.uhn.fhir.model.dstu2.resource.OperationOutcome;
 import ca.uhn.fhir.model.dstu2.resource.Patient;
@@ -24,6 +25,8 @@ import ca.uhn.fhir.rest.server.exceptions.InternalErrorException;
 import ca.uhn.fhir.rest.server.exceptions.InvalidRequestException;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 import ca.uhn.fhir.rest.server.exceptions.UnprocessableEntityException;
+import org.bch.c3pro.server.exception.C3PROException;
+import org.bch.c3pro.server.util.Utils;
 
 import java.util.*;
 
@@ -65,6 +68,22 @@ public class PatientResourceProvider extends C3PROResourceProvider implements IR
         String newId = generateNewId();
         addNewVersion(thePatient, newId);
         this.sendMessage(thePatient);
+
+        if (thePatient.getAddress()!=null) {
+            if (!thePatient.getAddress().isEmpty()) {
+                // We get just the first adress
+                AddressDt address = thePatient.getAddress().get(0);
+                if (address.getState()!=null) {
+                    try {
+                        Utils.updateMapInfo(address.getState(), this.s3, 1);
+                    } catch (C3PROException e) {
+                        log.error(e.getMessage());
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+
         // Let the caller know the ID of the newly created resource
         return new MethodOutcome(new IdDt(newId));
     }

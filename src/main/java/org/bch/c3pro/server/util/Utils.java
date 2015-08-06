@@ -1,5 +1,11 @@
 package org.bch.c3pro.server.util;
 
+import org.bch.c3pro.server.config.AppConfig;
+import org.bch.c3pro.server.exception.C3PROException;
+import org.bch.c3pro.server.external.S3Access;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
@@ -22,6 +28,9 @@ public class Utils {
      * @param sep       The line sepparator
      * @throws Exception
      */
+
+    public static final String TOTAL_LABEL = "TOTAL";
+
     public static void textFileToStringBuffer(Class cl, String fileName, StringBuffer sb, String sep)
             throws IOException {
         InputStream in = cl.getResourceAsStream(fileName);
@@ -33,6 +42,37 @@ public class Utils {
             }
         } finally {
             in.close();
+        }
+    }
+
+
+    // We synchronized the method to avoid mis counting: Only one thread at a time can execute the method
+    synchronized public static void updateMapInfo(String state, S3Access s3, int num) throws C3PROException {
+        String filename = AppConfig.getProp(AppConfig.APP_FILENAME_MAPCOUNT);
+        String jsonContent = s3.get(filename);
+        state = state.toUpperCase();
+        try {
+            JSONObject json = new JSONObject(jsonContent);
+            if (json.has(state)) {
+                // update the count by the state
+                long count = json.getLong(state);
+                count = count + num;
+                json.remove(state);
+                json.put(state, count);
+
+                // update the total count
+                long total = json.getLong(TOTAL_LABEL);
+                total = total + num;
+                json.remove(TOTAL_LABEL);
+                json.put(TOTAL_LABEL, total);
+
+                // update the bucket
+                s3.put(filename, json.toString());
+            } else {
+                throw new C3PROException("State " + state + " is not a valid US state");
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
 

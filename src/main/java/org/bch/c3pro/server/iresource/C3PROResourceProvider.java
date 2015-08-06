@@ -21,8 +21,8 @@ import java.security.spec.X509EncodedKeySpec;
  * Created by CH176656 on 5/4/2015.
  */
 public abstract class C3PROResourceProvider {
-    private Queue sqs = new SQSAccess();
-    private S3Access s3 = new S3Access();
+    protected Queue sqs = new SQSAccess();
+    protected S3Access s3 = new S3Access();
 
     Logger log = LoggerFactory.getLogger(C3PROResourceProvider.class);
 
