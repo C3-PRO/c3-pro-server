@@ -37,7 +37,13 @@ public class USMap extends HttpServlet {
         response.setContentType("image/svg-xml");
         StringBuffer sb = new StringBuffer();
         Utils.textFileToStringBuffer(USMap.class, BASE_MAP_FILE_NAME, sb, "\n");
-        response.getWriter().println(sb.toString());
+        String svg = sb.toString();
+        try {
+            svg = colorMap(svg);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        response.getWriter().println(svg);
         return;
     }
 
