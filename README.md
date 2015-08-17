@@ -2,11 +2,13 @@
 
 C3-PRO-Server is a highly reliable and scalable FHIR DSTU2 compliant web server, designed to cope with the traffic from mobile apps. The current version can only be deployed in AWS. It populates an AWS SQS with the FHIR resources that are POST. It does not consume the queue. A consumer can be found in the project [c3pro-consumer] (https://bitbucket.org/ipinyol/c3pro-consumer)
 
-The system servers the following rest methods:
+The system serves the following rest methods:
 
     HTTP/1.1 GET /c3pro/fhir/Questionnaire
     HTTP/1.1 POST /c3pro/fhir/QuestionnaireAnswer
     HTTP/1.1 POST /c3pro/fhir/Contract
+    HTTP/1.1 POST /c3pro/fhir/Observation
+
 
 It uses oauth2 two legged for authorization, which needs an initial phase for registration:
 
@@ -87,7 +89,7 @@ The systems uses an oracle DB to manage credentials and bearer token. Here are t
 insert into AntiSpamToken (token) values ('{{the_token_hashed_with_sha1}}');
 ```
 
-  To generate sha1 hashed token execute the script: *{{src/main/scripts/generate_hashed_token.sql}}* replacing *{{"REPLACE by a high entropy token"}}* by the desired anti spam token.
+  To generate sha1 hashed token execute the script: *{{src/main/scripts/generate_hashed_token.sh}}* replacing *{{"REPLACE by a high entropy token"}}* by the desired anti spam token.
 
 * Deploy the provided oracle jdbc driver in jBoss:
 
