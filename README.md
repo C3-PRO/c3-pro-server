@@ -89,7 +89,7 @@ The systems uses an oracle DB to manage credentials and bearer token. Here are t
 insert into AntiSpamToken (token) values ('{{the_token_hashed_with_sha1}}');
 ```
 
-  To generate sha1 hashed token execute the script: *{{src/main/scripts/generate_hashed_token.sql}}* replacing *{{"REPLACE by a high entropy token"}}* by the desired anti spam token.
+  To generate sha1 hashed token execute the script: *{{src/main/scripts/generate_hashed_token.sh}}* replacing *{{"REPLACE by a high entropy token"}}* by the desired anti spam token.
 
 * Deploy the provided oracle jdbc driver in jBoss:
 
