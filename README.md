@@ -2,11 +2,13 @@
 
 C3-PRO-Server is a highly reliable and scalable FHIR DSTU2 compliant web server, designed to cope with the traffic from mobile apps. The current version can only be deployed in AWS. It populates an AWS SQS with the FHIR resources that are POST. It does not consume the queue. A consumer can be found in the project [c3pro-consumer] (https://bitbucket.org/ipinyol/c3pro-consumer)
 
-The system servers the following rest methods:
+The system serves the following rest methods:
 
     HTTP/1.1 GET /c3pro/fhir/Questionnaire
     HTTP/1.1 POST /c3pro/fhir/QuestionnaireAnswer
     HTTP/1.1 POST /c3pro/fhir/Contract
+    HTTP/1.1 POST /c3pro/fhir/Observation
+
 
 It uses oauth2 two legged for authorization, which needs an initial phase for registration:
 
