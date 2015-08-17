@@ -75,7 +75,8 @@ public abstract class C3PROResourceProvider {
         try {
             value = this.s3.get(key);
         } catch (C3PROException e) {
-            throw new InternalErrorException("Error reading resource from AWS S3", e);
+            log.warn("Questionnaire id:" + id + " not found");
+            return null;
         }
         IParser parser = ctx.newJsonParser();
         BaseResource baseResource = parser.parseResource(getResourceClass(), value);
