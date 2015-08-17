@@ -79,7 +79,6 @@ public abstract class C3PROResourceProvider {
             return null;
         }
         IParser parser = ctx.newJsonParser();
-        System.out.println(value);
         BaseResource baseResource = parser.parseResource(getResourceClass(), value);
         return baseResource;
     }
