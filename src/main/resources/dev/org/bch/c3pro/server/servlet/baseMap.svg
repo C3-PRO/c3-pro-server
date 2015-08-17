@@ -180,23 +180,23 @@
      inkscape:guide-bbox="true" />
 
   <g class="legend" transform="translate(836,400)">
-    <rect class="legend-rect .q100" width="18" height="18" style="stroke: rgb(57, 59, 121);"></rect>
-    <text x="22" y="14">More than 20%</text>
+      <rect class="legend-rect q100" width="18" height="18"></rect>
+      <text x="22" y="14">More than 20%</text>
   </g>
   <g class="legend" transform="translate(836,422)">
-    <rect class="legend-rect .q20" width="18" height="18" style="stroke: rgb(82, 84, 163);"></rect>
-    <text x="22" y="14">More than 10%</text>
+      <rect class="legend-rect q20" width="18" height="18"></rect>
+      <text x="22" y="14">More than 10%</text>
   </g>
   <g class="legend" transform="translate(836,444)">
-    <rect class="legend-rect .q5" width="18" height="18" style="stroke: rgb(107, 110, 207);"></rect>
-    <text x="22" y="14">More than 5%</text>
+      <rect class="legend-rect q5" width="18" height="18"></rect>
+      <text x="22" y="14">More than 5%</text>
   </g>
   <g class="legend" transform="translate(836,466)">
-    <rect class="legend-rect .q1" width="18" height="18" style="stroke: rgb(156, 158, 222);"></rect>
-    <text x="22" y="14">More than 1%</text>
+      <rect class="legend-rect q1" width="18" height="18"></rect>
+      <text x="22" y="14">More than 1%</text>
   </g>
   <g class="legend" transform="translate(836,488)">
-      <rect class="legend-rect .xx" width="18" height="18" style="stroke: rgb(156, 158, 222);"></rect>
+      <rect class="legend-rect xx" width="18" height="18"></rect>
       <text x="22" y="14">No data</text>
     </g>
   <g
