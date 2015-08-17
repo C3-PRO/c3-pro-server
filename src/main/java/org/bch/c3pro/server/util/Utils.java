@@ -32,7 +32,7 @@ public class Utils {
      */
     public static final String [] US_STATES = {"AL","AK","AZ","AR","CA","CO","CT","DE","FL","GA","HI","ID","IL","IN",
             "IA","KS","KY","LA","ME","MD","MA","MI","MN","MS","MO","MT","NE","NV","NH","NJ","NM","NY","NC","ND","OH",
-            "OK","OR","PA", "PR", "RI","SC","SD","TN","TX","UT","VT","VA","WA","WV","WI","WY"};
+            "OK","OR","PA", "PR", "RI","SC","SD","TN","TX","UT","VT","VI", "VA","WA","WV","WI","WY"};
 
     public static final String [] US_STATES_EXT = {
     "alabama",
@@ -81,6 +81,7 @@ public class Utils {
     "texas",
     "utah",
     "vermont",
+    "virgin islands",
     "virginia",
     "washington",
     "west virginia",
