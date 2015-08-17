@@ -69,7 +69,7 @@ public abstract class C3PROResourceProvider {
 
     protected BaseResource getResource(String id) {
         Class cl = getResourceClass();
-        String key = cl.getSimpleName() + id;
+        String key = cl.getSimpleName() + "#" + id +".json";
 
         String value=null;
         try {
