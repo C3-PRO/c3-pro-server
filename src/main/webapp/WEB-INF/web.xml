@@ -65,6 +65,8 @@
         <javaee:servlet-name>fhir_enc</javaee:servlet-name>
         <javaee:url-pattern>/encfhir/QuestionnaireAnswer</javaee:url-pattern>
         <javaee:url-pattern>/encfhir/Contract</javaee:url-pattern>
+        <javaee:url-pattern>/encfhir</javaee:url-pattern>
+        <javaee:url-pattern>/encfhir/*</javaee:url-pattern>
     </javaee:servlet-mapping>
 
     <javaee:servlet-mapping>

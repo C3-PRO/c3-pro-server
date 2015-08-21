@@ -22,8 +22,8 @@ import java.io.PrintWriter;
  *
  */
 public class FHIREncServlet extends HttpServlet {
-    private static String JSON_TAG_RESOURCE = "resource";
-    private static String JSON_TAG_KEY = "key";
+    private static String JSON_TAG_RESOURCE = "message";
+    private static String JSON_TAG_KEY = "symmetric_key";
     private static String JSON_TAG_KEYID = "key_id";
 
     protected static Queue sqs = new SQSAccess();
