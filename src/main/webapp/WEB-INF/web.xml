@@ -107,6 +107,7 @@
         <javaee:url-pattern>/rest/*</javaee:url-pattern>
         <javaee:url-pattern>/fhir/*</javaee:url-pattern>
         <javaee:url-pattern>/encfhir/*</javaee:url-pattern>
+        <javaee:url-pattern>/encfhir</javaee:url-pattern>
     </javaee:filter-mapping>
 
     <!--OAuth Authorization server is protected though a special filter -->
