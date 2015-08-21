@@ -88,6 +88,28 @@ public class PatientResourceProvider extends C3PROResourceProvider implements IR
         return new MethodOutcome(new IdDt(newId));
     }
 
+    @Update()
+    public MethodOutcome updatePatient(@ResourceParam Patient thePatient) {
+        this.sendMessage(thePatient);
+        if (thePatient.getAddress()!=null) {
+            if (!thePatient.getAddress().isEmpty()) {
+                // We get just the first adress
+                AddressDt address = thePatient.getAddress().get(0);
+                if (address.getState()!=null) {
+                    try {
+                        Utils.updateMapInfo(address.getState(), this.s3, 1);
+                    } catch (C3PROException e) {
+                        log.error(e.getMessage());
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+
+        // Let the caller know the ID of the newly created resource
+        return new MethodOutcome();
+    }
+
     /**
      * Stores a new version of the patient in memory so that it can be retrieved later.
      *
