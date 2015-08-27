@@ -77,13 +77,14 @@ public class SQSAccess implements Queue {
         setCredentials();
         // We send the encrypted message to the Queue. We Base64 encode it
         SendMessageRequest mse = new SendMessageRequest(AppConfig.getProp(AppConfig.AWS_SQS_URL), msg);
+        System.out.println(AppConfig.getProp(AppConfig.AWS_SQS_URL));
 
         // Add SQS Elem metadata: encrypted symmetric key
         MessageAttributeValue atr = new MessageAttributeValue();
         atr.setStringValue(key);
         atr.setDataType("String");
         mse.addMessageAttributesEntry(AppConfig.getProp(AppConfig.SECURITY_METADATAKEY), atr);
-
+        
         // Add SQS Elem metadata: public key uuid
         atr = new MessageAttributeValue();
         atr.setStringValue(uuid);
