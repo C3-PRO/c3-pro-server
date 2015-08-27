@@ -84,7 +84,7 @@ public class SQSAccess implements Queue {
         atr.setStringValue(key);
         atr.setDataType("String");
         mse.addMessageAttributesEntry(AppConfig.getProp(AppConfig.SECURITY_METADATAKEY), atr);
-        
+
         // Add SQS Elem metadata: public key uuid
         atr = new MessageAttributeValue();
         atr.setStringValue(uuid);
@@ -137,6 +137,7 @@ public class SQSAccess implements Queue {
             AWSCredentials credentials = null;
             try {
                 System.setProperty("aws.profile", AppConfig.getProp(AppConfig.AWS_SQS_PROFILE));
+                System.out.println(AppConfig.getProp(AppConfig.AWS_SQS_PROFILE));
                 credentials = new ProfileCredentialsProvider().getCredentials();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -147,6 +148,7 @@ public class SQSAccess implements Queue {
                         e);
             }
             this.sqs = new AmazonSQSClient(credentials);
+            System.out.println(AppConfig.getProp(AppConfig.AWS_SQS_REGION));
             Region usWest2 = Region.getRegion(Regions.fromName(AppConfig.getProp(AppConfig.AWS_SQS_REGION)));
             sqs.setRegion(usWest2);
         }
