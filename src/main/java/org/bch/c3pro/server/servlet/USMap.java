@@ -27,8 +27,10 @@ import java.util.Map;
 public class USMap extends HttpServlet {
     private static final String [] classes = {".xx", ".q1", ".q5", ".q20", ".q100"};
     private static final int [] thresholds = {0,1,5,10,20};
-    private static final String [] colors = {"fill: #E6F5EB;", "fill: #99D6AD;", "fill: #4DB870;", "fill: #009933;",
-            "fill: #006B24;"};
+    //private static final String [] colors = {"fill: #E6F5EB;", "fill: #99D6AD;", "fill: #4DB870;", "fill: #009933;",
+    //        "fill: #006B24;"};
+    private static final String [] colors = {"fill: #2D4F7F;", "fill: #39639F;", "fill: #5A7CAC;", "fill: #7590B7;", "fill: #8BA0BF;"};
+
     private static final String REPLACEMENT_WORD = "/*REPLACE_BY_C3PRO_CSS*/";
 
     protected S3Access s3 = new S3Access();
