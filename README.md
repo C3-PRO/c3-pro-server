@@ -5,9 +5,10 @@ C3-PRO-Server is a highly reliable and scalable FHIR DSTU2 compliant web server,
 The system serves the following rest methods:
 
     HTTP/1.1 GET /c3pro/fhir/Questionnaire
-    HTTP/1.1 POST /c3pro/fhir/QuestionnaireAnswer
+    HTTP/1.1 POST /c3pro/fhir/QuestionnaireAnswers
     HTTP/1.1 POST /c3pro/fhir/Contract
     HTTP/1.1 POST /c3pro/fhir/Observation
+    HTTP/1.1 PUT /c3pro/fhir/Patient
 
 
 It uses oauth2 two legged for authorization, which needs an initial phase for registration:
