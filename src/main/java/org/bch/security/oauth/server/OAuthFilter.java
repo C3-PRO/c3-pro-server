@@ -18,8 +18,12 @@ public class OAuthFilter implements Filter {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
             throws IOException, ServletException {
         try {
+
             HttpServletRequest request = (HttpServletRequest)servletRequest;
             request.login("", "");
+            String auth = request.getHeader("Authorization");
+            System.out.println("UNAUTHORIZED");
+            System.out.println(auth);
             filterChain.doFilter(servletRequest, servletResponse);
         } catch (Exception e) {
             HttpServletResponse response = (HttpServletResponse) servletResponse;

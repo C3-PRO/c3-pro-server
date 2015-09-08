@@ -62,10 +62,6 @@ public class OAuth2Server extends HttpServlet {
     }
 
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String auth = request.getHeader("Authorization");
-        System.out.println("*******AUTHORIZED******");
-        System.out.println(auth);
-
         String grantType = request.getParameter(GRANT_TYPE);
         if (grantType==null) {
             log.info("Grant type is null");
