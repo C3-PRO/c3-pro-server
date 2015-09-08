@@ -21,15 +21,9 @@ public class OAuthFilter implements Filter {
 
             HttpServletRequest request = (HttpServletRequest)servletRequest;
             request.login("", "");
-            String auth = request.getHeader("Authorization");
-            System.out.println("UNAUTHORIZED");
-            System.out.println(auth);
             filterChain.doFilter(servletRequest, servletResponse);
         } catch (Exception e) {
             HttpServletRequest request = (HttpServletRequest)servletRequest;
-            String auth = request.getHeader("Authorization");
-            System.out.println("UNAUTHORIZED");
-            System.out.println(auth);
             HttpServletResponse response = (HttpServletResponse) servletResponse;
             ErrorReturn err = new ErrorReturn();
             err.setErrorType(ErrorReturn.ErrorType.ERROR_UNAUTHORIZED_CLIENT);

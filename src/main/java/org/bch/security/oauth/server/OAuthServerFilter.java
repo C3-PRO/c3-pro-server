@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Writer;
+import java.net.URLDecoder;
 
 /**
  * Created by CH176656 on 6/2/2015.
@@ -42,6 +43,7 @@ public class OAuthServerFilter implements Filter{
             }
             byte [] authBytes = Base64.decode(parts[1]);
             String auth = new String(authBytes, "UTF-8");
+            auth = URLDecoder.decode(auth, "UTF-8");
             System.out.println("************ -> " + auth);
             String []cred = auth.split(":");
             request.login(cred[0], cred[1]);
