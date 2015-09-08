@@ -198,7 +198,7 @@ public class RegisterServer extends HttpServlet {
 
     protected int validateAppeReceipt(String receipt, String urlStr) throws Exception {
         String jsonReq = String.format(JSON_REQUEST_APPLE, receipt);
-        URL url = new URL(AppConfig.getProp(AppConfig.APP_IOS_VERIF_ENDPOINT));
+        URL url = new URL(urlStr);
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
         con.setRequestMethod("POST");
         con.setDoOutput(true);
