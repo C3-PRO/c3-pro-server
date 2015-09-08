@@ -72,7 +72,7 @@ public class ObservationResourceProvider extends C3PROResourceProvider implement
         theQA.setId(newId);
         existingVersions.add(theQA);
     }
-
+/*
     @Read(version = true)
     public Observation readQA(@IdParam IdDt theId) {
         Deque<Observation> retVal;
@@ -103,4 +103,5 @@ public class ObservationResourceProvider extends C3PROResourceProvider implement
 
         return retVal;
     }
+    */
 }

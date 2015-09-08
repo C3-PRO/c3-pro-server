@@ -63,6 +63,7 @@ public class PatientResourceProvider extends C3PROResourceProvider implements IR
      * The "@Create" annotation indicates that this method implements "create=type", which adds a
      * new instance of a resource to the server.
      */
+    /*
     @Create()
     public MethodOutcome createPatient(@ResourceParam Patient thePatient) {
         String newId = generateNewId();
@@ -87,6 +88,7 @@ public class PatientResourceProvider extends C3PROResourceProvider implements IR
         // Let the caller know the ID of the newly created resource
         return new MethodOutcome(new IdDt(newId));
     }
+    */
 
     @Update()
     public MethodOutcome updatePatient(@ResourceParam Patient thePatient) {
@@ -146,7 +148,7 @@ public class PatientResourceProvider extends C3PROResourceProvider implements IR
 
         existingVersions.add(thePatient);
     }
-
+/*
     @Search
     public List<Patient> findPatientsUsingArbitraryCtriteria() {
         LinkedList<Patient> retVal = new LinkedList<Patient>();
@@ -158,7 +160,7 @@ public class PatientResourceProvider extends C3PROResourceProvider implements IR
 
         return retVal;
     }
-
+*/
 
     /**
      * The getResourceType method comes from IResourceProvider, and must be overridden to indicate what type of resource this provider supplies.
@@ -178,6 +180,7 @@ public class PatientResourceProvider extends C3PROResourceProvider implements IR
      *            The read operation takes one parameter, which must be of type IdDt and must be annotated with the "@Read.IdParam" annotation.
      * @return Returns a resource matching this identifier, or null if none exists.
      */
+    /*
     @Read(version = true)
     public Patient readPatient(@IdParam IdDt theId) {
         Deque<Patient> retVal;
@@ -197,4 +200,5 @@ public class PatientResourceProvider extends C3PROResourceProvider implements IR
         }
 
     }
+    */
 }

@@ -72,6 +72,7 @@ public class ConsentResourceProvider extends C3PROResourceProvider implements IR
         existingVersions.add(theContract);
     }
 
+    /*
     @Read(version = true)
     public Contract readContract(@IdParam IdDt theId) {
         Deque<Contract> retVal;
@@ -101,5 +102,6 @@ public class ConsentResourceProvider extends C3PROResourceProvider implements IR
         }
         return retVal;
     }
+    */
 
 }

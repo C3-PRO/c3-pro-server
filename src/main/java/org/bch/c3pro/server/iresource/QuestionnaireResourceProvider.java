@@ -34,6 +34,7 @@ public class QuestionnaireResourceProvider extends C3PROResourceProvider impleme
         return Questionnaire.class;
     }
 
+    /*
     @Create()
     public MethodOutcome createQuestionnaire(@ResourceParam Questionnaire theQ) {
         String newId;
@@ -69,9 +70,7 @@ public class QuestionnaireResourceProvider extends C3PROResourceProvider impleme
             publishedDate = (InstantDt) resourceMetadata.get(ResourceMetadataKeyEnum.PUBLISHED);
         }
 
-		/*
-		 * PUBLISHED time will always be set to the time that the first version was stored. UPDATED time is set to the time that the new version was stored.
-		 */
+
         theQt.getResourceMetadata().put(ResourceMetadataKeyEnum.PUBLISHED, publishedDate);
         theQt.getResourceMetadata().put(ResourceMetadataKeyEnum.UPDATED, InstantDt.withCurrentTime());
 
@@ -90,7 +89,7 @@ public class QuestionnaireResourceProvider extends C3PROResourceProvider impleme
         theQt.setId(newId);
         existingVersions.add(theQt);
     }
-
+*/
     @Read(version = true)
     public Questionnaire readQuestionnaire(@IdParam IdDt theId) {
         Deque<Questionnaire> retVal;
@@ -115,7 +114,7 @@ public class QuestionnaireResourceProvider extends C3PROResourceProvider impleme
         }
 
     }
-
+/*
     @Search
     public List<Questionnaire> findQuestionnairesUsingArbitraryCtriteria() {
         LinkedList<Questionnaire> retVal = new LinkedList<>();
@@ -127,4 +126,5 @@ public class QuestionnaireResourceProvider extends C3PROResourceProvider impleme
 
         return retVal;
     }
+    */
 }

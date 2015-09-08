@@ -70,7 +70,7 @@ public class QuestionnaireAnswerResourceProvider extends C3PROResourceProvider i
         theQA.setId(newId);
         existingVersions.add(theQA);
     }
-
+/*
     @Read(version = true)
     public QuestionnaireAnswers readQA(@IdParam IdDt theId) {
         Deque<QuestionnaireAnswers> retVal;
@@ -101,4 +101,5 @@ public class QuestionnaireAnswerResourceProvider extends C3PROResourceProvider i
 
         return retVal;
     }
+    */
 }
