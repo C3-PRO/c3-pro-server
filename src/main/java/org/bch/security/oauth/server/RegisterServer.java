@@ -196,16 +196,7 @@ public class RegisterServer extends HttpServlet {
         return Base64.encode(key);
     }
 
-    /**
-     * Performs a validation of the receipt to Apple servers
-     * @param receipt
-     * @return
-     */
-    protected boolean validateAppleReceipt(String receipt) throws Exception {
-        log.info("Validating Apple Receipt");
-        log.info("RECEIPT:");
-        log.info(receipt);
-        if (receipt.equals("NO-APP-RECEIPT")) return true;
+    protected int validateAppeReceipt(String receipt, String urlStr) throws Exception {
         String jsonReq = String.format(JSON_REQUEST_APPLE, receipt);
         URL url = new URL(AppConfig.getProp(AppConfig.APP_IOS_VERIF_ENDPOINT));
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
@@ -235,9 +226,11 @@ public class RegisterServer extends HttpServlet {
             try {
                 bid = receiptJSON.getString(APPLE_JSON_KEY_BUNDLE);
                 ret = bid.trim().toLowerCase().equals(this.getAppId().trim().toLowerCase());
+                if (ret) status = 0;
             } catch (JSONException e) {
                 log.warn(APPLE_JSON_KEY_BUNDLE + " json field not found");
                 ret = AppConfig.getProp(AppConfig.APP_IOS_VERIF_ENDPOINT).contains("sandbox");
+                if (ret) status=0;
             }
             if (ret) {
                 log.info("Receipt validated against Apple servers");
@@ -246,6 +239,26 @@ public class RegisterServer extends HttpServlet {
             }
         } else {
             log.info("Apple receipt status:" + status);
+        }
+        return status;
+    }
+
+    /**
+     * Performs a validation of the receipt to Apple servers
+     * @param receipt
+     * @return
+     */
+    protected boolean validateAppleReceipt(String receipt) throws Exception {
+        log.info("Validating Apple Receipt");
+        log.info("RECEIPT:");
+        log.info(receipt);
+        if (receipt.equals("NO-APP-RECEIPT")) return true;
+        int status = validateAppeReceipt(receipt, AppConfig.getProp(AppConfig.APP_IOS_VERIF_ENDPOINT));
+        boolean ret = false;
+        if (status == 21007) {
+            // It means we have a receipt from a test environment
+            status = validateAppeReceipt(receipt, AppConfig.getProp(AppConfig.APP_IOS_VERIF_TEST_ENDPOINT));
+            ret = (status==0);
         }
         return ret;
     }

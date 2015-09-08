@@ -98,6 +98,9 @@ public class QuestionnaireResourceProvider extends C3PROResourceProvider impleme
 
         if (theId.hasVersionIdPart() == false) {
             Questionnaire theQ = (Questionnaire) getResource(theId.getIdPart());
+            if (theQ==null) {
+                throw new ResourceNotFoundException("Questionnaire " + theId.getIdPart() + " not found");
+            }
             return theQ;
             //return retVal.getLast();
         } else {
