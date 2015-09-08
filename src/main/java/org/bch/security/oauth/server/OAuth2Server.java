@@ -125,6 +125,9 @@ public class OAuth2Server extends HttpServlet {
             err.setErrorDesc("SQL Error");
             err.writeError(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         } catch(Exception ex) {
+            String auth = request.getHeader("Authorization");
+            System.out.println("UNAUTHORIZED");
+            System.out.println(auth);
             ex.printStackTrace();
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             ErrorReturn err = new ErrorReturn();
