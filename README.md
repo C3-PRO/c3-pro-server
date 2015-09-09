@@ -10,7 +10,6 @@ The system serves the following rest methods:
     HTTP/1.1 POST /c3pro/fhir/Observation
     HTTP/1.1 PUT /c3pro/fhir/Patient
 
-
 It uses oauth2 two legged for authorization, which needs an initial phase for registration:
 
 **Registration request:**
@@ -40,6 +39,8 @@ The registration phase should be called only once per device. Once the device is
     HTTP/1.1 POST /c3pro/oauth?grant_type=client_credentials
     Authentication: Basic BASE64(ClientId:Secret)
 
+NOTE: According to [OAuth2 two-legged specifications](https://tools.ietf.org/html/rfc6750) both clientId and Secret should be **x-www-form-urlencoded** before Base64 encoding is applied.
+ 
 **Oauth2 authorization response**
 
     HTTP/1.1 201 Created
@@ -51,6 +52,7 @@ The registration phase should be called only once per device. Once the device is
     } 
 
 The Bearer token can be used in the rest calls that serve FHIR resources as authorization credentials.
+
 
 # Configuration and Deployment #
 
