@@ -23,7 +23,6 @@ public class OAuthFilter implements Filter {
             request.login("", "");
             filterChain.doFilter(servletRequest, servletResponse);
         } catch (Exception e) {
-            HttpServletRequest request = (HttpServletRequest)servletRequest;
             HttpServletResponse response = (HttpServletResponse) servletResponse;
             ErrorReturn err = new ErrorReturn();
             err.setErrorType(ErrorReturn.ErrorType.ERROR_UNAUTHORIZED_CLIENT);

@@ -250,7 +250,6 @@ public class RegisterServer extends HttpServlet {
      */
     protected boolean validateAppleReceipt(String receipt) throws Exception {
         log.info("Validating Apple Receipt");
-        log.info("RECEIPT:");
         log.info(receipt);
         if (receipt.equals("NO-APP-RECEIPT")) return true;
         int status = validateAppeReceipt(receipt, AppConfig.getProp(AppConfig.APP_IOS_VERIF_ENDPOINT));

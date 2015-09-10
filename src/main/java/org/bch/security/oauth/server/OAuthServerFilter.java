@@ -25,7 +25,6 @@ public class OAuthServerFilter implements Filter{
         try {
             HttpServletRequest request = (HttpServletRequest)servletRequest;
             String auth64 = request.getHeader("Authorization");
-            System.out.println("************64 -> " + auth64);
             if (!isBasicAuth(auth64)) {
                 HttpServletResponse response = (HttpServletResponse) servletResponse;
                 ErrorReturn err = new ErrorReturn();
@@ -44,7 +43,6 @@ public class OAuthServerFilter implements Filter{
             byte [] authBytes = Base64.decode(parts[1]);
             String auth = new String(authBytes, "UTF-8");
             auth = URLDecoder.decode(auth, "UTF-8");
-            System.out.println("************ -> " + auth);
             String []cred = auth.split(":");
             request.login(cred[0], cred[1]);
             filterChain.doFilter(servletRequest, servletResponse);
