@@ -98,7 +98,8 @@ public class RegisterServer extends HttpServlet {
 
         } catch (JSONException e) {
             log.error(e.getMessage());
-            Mail.emailIfError("JSONException  Error during registration: ", "JSONException: " + e.getMessage(), "JSONException");
+            Mail.emailIfError("JSONException  Error during registration: ", "JSONException: " + e.getMessage()+"\n" +
+                    "json string: " + jsonPost, "JSONException");
             ErrorReturn err = new ErrorReturn();
             err.setErrorType(ErrorReturn.ErrorType.ERROR_INVALID_REQUEST);
             err.writeError(response, HttpServletResponse.SC_BAD_REQUEST);
