@@ -4,6 +4,7 @@ import com.amazonaws.services.route53.model.ResourceRecordSet;
 import org.apache.axiom.om.util.Base64;
 import org.bch.c3pro.server.config.AppConfig;
 import org.bch.c3pro.server.exception.C3PROException;
+import org.bch.c3pro.server.util.Mail;
 import org.bch.c3pro.server.util.Utils;
 import org.jboss.security.auth.spi.Util;
 import org.json.JSONException;
@@ -79,6 +80,7 @@ public class RegisterServer extends HttpServlet {
         if (!passFilter(request)) {
             log.info("Antispam token not validated!");
             //response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            Mail.emailIfError("Antispam not validated: ", "Antispam token not validated", "Antispam");
             ErrorReturn err = new ErrorReturn();
             err.setErrorType(ErrorReturn.ErrorType.ERROR_UNAUTHORIZED_CLIENT);
             err.setErrorDesc("Antispam token not validated");
@@ -101,12 +103,14 @@ public class RegisterServer extends HttpServlet {
             }
         } catch (JSONException e) {
             log.error(e.getMessage());
+            Mail.emailIfError("JSONException  Error during registration: ", "JSONException: " + e.getMessage(), "JSONException");
             ErrorReturn err = new ErrorReturn();
             err.setErrorType(ErrorReturn.ErrorType.ERROR_INVALID_REQUEST);
             err.writeError(response, HttpServletResponse.SC_BAD_REQUEST);
             return;
         } catch (Exception e) {
             log.error(e.getMessage());
+            Mail.emailIfError("Exception during registration: ", "Exception: " + e.getMessage(), "Exception");
             ErrorReturn err = new ErrorReturn();
             err.setErrorType(ErrorReturn.ErrorType.ERROR_INVALID_REQUEST);
             err.setErrorDesc(e.getMessage());
@@ -117,6 +121,7 @@ public class RegisterServer extends HttpServlet {
         // If no validation, the request is not authorized
         if (!validationOK) {
             log.warn("Apple receipt not valid");
+            Mail.emailIfError("Apple receipt not valid: ","Invalid Apple receipt. Check logs for details" , "Apple");
             ErrorReturn err = new ErrorReturn();
             err.setErrorType(ErrorReturn.ErrorType.ERROR_UNAUTHORIZED_CLIENT);
             err.setErrorDesc("Apple receipt not valid");
