@@ -93,14 +93,9 @@ public class RegisterServer extends HttpServlet {
         JSONObject json=null;
         try {
             json = new JSONObject(jsonPost);
-            boolean sandbox = json.getBoolean(JSON_TAG_SANDBOX);
-            if (!sandbox) {
-                validationOK = true;
-                log.info("Sandbox flag is false");
-            } else {
-                String receipt = json.getString(JSON_TAG_RECEIPT);
-                validationOK = validateAppleReceipt(receipt);
-            }
+            String receipt = json.getString(JSON_TAG_RECEIPT);
+            validationOK = validateAppleReceipt(receipt);
+
         } catch (JSONException e) {
             log.error(e.getMessage());
             Mail.emailIfError("JSONException  Error during registration: ", "JSONException: " + e.getMessage(), "JSONException");
