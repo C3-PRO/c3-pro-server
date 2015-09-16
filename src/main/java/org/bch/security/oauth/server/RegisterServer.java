@@ -254,10 +254,12 @@ public class RegisterServer extends HttpServlet {
         if (receipt.equals("NO-APP-RECEIPT")) return true;
         int status = validateAppeReceipt(receipt, AppConfig.getProp(AppConfig.APP_IOS_VERIF_ENDPOINT));
         boolean ret = false;
+        System.out.println("Returned code: " + status);
         if (status == 21007) {
             // It means we have a receipt from a test environment
             status = validateAppeReceipt(receipt, AppConfig.getProp(AppConfig.APP_IOS_VERIF_TEST_ENDPOINT));
             ret = (status==0);
+            System.out.println("Returned code: " + status);
         }
         return ret;
     }
