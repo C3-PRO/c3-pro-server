@@ -49,7 +49,7 @@ public class AppConfig {
     public static final String APP_IOS_ID =                     "app.ios.id";
     public static final String APP_IOS_VERIF_ENDPOINT =         "app.ios.verification.endpoint";
     public static final String APP_IOS_VERIF_TEST_ENDPOINT=     "app.ios.verificationtest.endpoint";
-    
+
 
     public static final String APP_FILENAME_MAPCOUNT =          "app.mapcount.s3.filename";
 
