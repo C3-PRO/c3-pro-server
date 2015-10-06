@@ -117,6 +117,41 @@ $C3PRO_HOME/cp ojdbc14.jar $JBOSS_HOME/standalone/deployments
 </datasource>
 ```
 
+* **Note for production deployments**: It's not recommended to display raw DB credentials in the configuration files, even when the servers are protected. One possible way is to use security domains to wrap encrypted credentials. For instance:
+  
+```
+#!xml
+
+<datasource jndi-name="java:jboss/datasources/c3proDS" pool-name="c3proDS" enabled="true" use-java-context="true">
+    <connection-url>{{jdbc_connection_to_db}}</connection-url>
+    <driver>ojdbc14.jar</driver>
+    <security>
+        <security-domain>secure-c3pro-credentials</security-domain>
+    </security>
+</datasource>
+```
+
+and in the security domain section:
+
+```
+#!xml
+<security-domain name="secure-c3pro-credentials" cache-type="default">
+   <authentication>
+      <login-module code="org.picketbox.datasource.security.SecureIdentityLoginModule" flag="required">
+          <module-option name="username" value="{{db_username}}"/>
+          <module-option name="password" value="{{ENCRYPTED PASSWORD}}"/>
+       </login-module>
+    </authentication>
+</security-domain>
+```
+
+The encrypted password can be generated running **picketbox** security module as follows:
+
+    java  org.picketbox.datasource.security.SecureIdentityLoginModule {{db_password}}
+
+The output will be the encrypted password to place in the security domain element. Make sure that your CLASS_PATH includes the appropriate jar file. PICKET BOX is included by default in JBOSS AS7 distribution as a module. 
+
+
 * Configure OAuth2LoginModule by editing the file *$JBOSS_HOME/standalone/configuration/standalone.xml*, and adding the following in the security-domains section:
 
 
