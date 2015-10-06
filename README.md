@@ -204,6 +204,18 @@ In PROD:
 
 These commands take the resource files located in *src/main/resources/qa* or *src/main/resources/prod* respectively, and place them as the resource files of the deployment.
 
+## Deploying on web server containers different than JBOSS##
+
+Generate the war files for the desired environment
+
+    mvn clean package
+    mvn clean package -Pqa
+    mvn clean package -Pprod
+
+and copy the generated war located in **target/c3pro-consumer.war** to the corresponding deployment directory. In **tomcat7** the default directory is:
+
+    /var/lib/tomcat7/webapps/
+
 ## Notes on AWS SDK usage ##
 
 The system uses the Java SDK provided by Amazon. The SDK will be installed automatically since it is a maven dependency. However, it grabs the credentials to access the S3 bucket and SQS from a file that should be located here:
