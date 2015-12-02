@@ -42,6 +42,8 @@ public class AppConfig {
     public static final String SECURITY_PUBLICKEY_ALG =         "app.security.publickey.algorithm";
     public static final String SECURITY_PUBLICKEY_BASEALG =     "app.security.publickey.basealgorithm";
 
+    public static final String FHIR_METADATA_VERSION =          "app.fhir.metadata.version";
+
     public static final String UTF = "UTF-8";
     // Whether we encrypt the messages when sent to the queue; yes - no
     public static final String SECURITY_ENCRYPTION_ENABLED =    "app.security.encryption.enabled";
@@ -56,6 +58,8 @@ public class AppConfig {
     public static final String PORT_SMTP=                       "app.port.smtp";
     public static final String HOST_SMTP =                      "app.host.smtp";
     public static final String MAIL_RECEIPTIENT =               "app.recipient.smtp";
+
+    public static final String FHIR_VERSION_DEFAULT =           "app.fhir.version.default";
 
     private static Properties prop = new Properties();
     /**

@@ -29,6 +29,7 @@ public abstract class C3PROResourceProvider {
 
     protected void sendMessage(BaseResource resource) throws InternalErrorException {
         log.info("IN sendMessage");
+        String version="";
         IParser jsonParser = this.ctx.newJsonParser();
         jsonParser.setPrettyPrint(true);
         String message = jsonParser.encodeResourceToString(resource);
@@ -41,6 +42,7 @@ public abstract class C3PROResourceProvider {
                 try {
                     publicKeyBin = this.s3.getBinary(AppConfig.getProp(AppConfig.SECURITY_PUBLICKEY));
                     publicKeyUUID = this.s3.get(AppConfig.getProp(AppConfig.SECURITY_PUBLICKEY_ID));
+                    version = AppConfig.getProp(AppConfig.FHIR_VERSION_DEFAULT);
                 } catch (C3PROException e) {
                     log.error(e.getMessage());
                     throw new InternalErrorException("Error reading public key or public key uuid from AWS S3", e);
@@ -48,7 +50,7 @@ public abstract class C3PROResourceProvider {
                 X509EncodedKeySpec publicSpec = new X509EncodedKeySpec(publicKeyBin);
                 KeyFactory keyFactory = KeyFactory.getInstance(AppConfig.getProp(AppConfig.SECURITY_PUBLICKEY_BASEALG));
                 PublicKey publicKey = keyFactory.generatePublic(publicSpec);
-                sqs.sendMessageEncrypted(message, publicKey, publicKeyUUID);
+                sqs.sendMessageEncrypted(message, publicKey, publicKeyUUID, version);
             }
         } catch (Exception e) {
             e.printStackTrace();

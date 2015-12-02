@@ -25,6 +25,7 @@ public class FHIREncServlet extends HttpServlet {
     private static String JSON_TAG_RESOURCE = "message";
     private static String JSON_TAG_KEY = "symmetric_key";
     private static String JSON_TAG_KEYID = "key_id";
+    private static String JSON_TAG_VERSION = "version";
 
     protected static Queue sqs = new SQSAccess();
 
@@ -33,18 +34,20 @@ public class FHIREncServlet extends HttpServlet {
         String msg=null;
         String key = null;
         String keyId = null;
+        String version = null;
         try {
             JSONObject postJson = new JSONObject(post);
             msg = postJson.getString(JSON_TAG_RESOURCE);
             key = postJson.getString(JSON_TAG_KEY);
             keyId = postJson.getString(JSON_TAG_KEYID);
+            version = postJson.getString(JSON_TAG_VERSION);
         } catch (JSONException e) {
             e.printStackTrace();
             Utils.sendJSONError(response, e.getMessage(),HttpServletResponse.SC_BAD_REQUEST );
             return;
         }
         try {
-            this.sqs.sendMessageAlreadyEncrypted(msg, key, keyId);
+            this.sqs.sendMessageAlreadyEncrypted(msg, key, keyId, version);
         } catch (C3PROException e) {
             e.printStackTrace();
             Utils.sendJSONError(response, e.getMessage(),HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
