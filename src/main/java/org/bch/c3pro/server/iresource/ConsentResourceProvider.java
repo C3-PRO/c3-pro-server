@@ -72,36 +72,4 @@ public class ConsentResourceProvider extends C3PROResourceProvider implements IR
         existingVersions.add(theContract);
     }
 
-    /*
-    @Read(version = true)
-    public Contract readContract(@IdParam IdDt theId) {
-        Deque<Contract> retVal;
-        retVal = myIdToContractVersions.get(theId.getIdPart());
-
-        if (theId.hasVersionIdPart() == false) {
-            return retVal.getLast();
-        } else {
-            for (Contract nextVersion : retVal) {
-                String nextVersionId = nextVersion.getId().getVersionIdPart();
-                if (theId.getVersionIdPart().equals(nextVersionId)) {
-                    return nextVersion;
-                }
-            }
-            // No matching version
-            throw new ResourceNotFoundException("Unknown version: " + theId.getValue());
-        }
-    }
-
-    @Search
-    public List<Contract> findContractsUsingArbitraryCtriteria() {
-        LinkedList<Contract> retVal = new LinkedList<>();
-
-        for (Deque<Contract> nextQList : myIdToContractVersions.values()) {
-            Contract nextQ = nextQList.getLast();
-            retVal.add(nextQ);
-        }
-        return retVal;
-    }
-    */
-
 }

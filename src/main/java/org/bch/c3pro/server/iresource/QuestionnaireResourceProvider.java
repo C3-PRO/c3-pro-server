@@ -34,62 +34,6 @@ public class QuestionnaireResourceProvider extends C3PROResourceProvider impleme
         return Questionnaire.class;
     }
 
-    /*
-    @Create()
-    public MethodOutcome createQuestionnaire(@ResourceParam Questionnaire theQ) {
-        String newId;
-        String version = null;
-
-        if (theQ.getId() == null) {
-            newId = generateNewId();
-        } else {
-            if (theQ.getId().getIdPart()== null) {
-                newId = generateNewId();
-            } else {
-                newId = theQ.getId().getIdPart();
-            }
-            if (theQ.getId().getVersionIdPart()!=null) {
-                version = theQ.getId().getVersionIdPart();
-            }
-        }
-        addNewVersion(theQ, newId, version);
-        this.sendMessage(theQ);
-        // Let the caller know the ID of the newly created resource
-        this.putResource(theQ);
-        return new MethodOutcome(new IdDt(newId));
-    }
-
-    private void addNewVersion(Questionnaire theQt, String theId, String version) {
-        InstantDt publishedDate;
-        if (!myIdToQVersions.containsKey(theId)) {
-            myIdToQVersions.put(theId, new LinkedList<Questionnaire>());
-            publishedDate = InstantDt.withCurrentTime();
-        } else {
-            Questionnaire currentQ = myIdToQVersions.get(theId).getLast();
-            Map<ResourceMetadataKeyEnum<?>, Object> resourceMetadata = currentQ.getResourceMetadata();
-            publishedDate = (InstantDt) resourceMetadata.get(ResourceMetadataKeyEnum.PUBLISHED);
-        }
-
-
-        theQt.getResourceMetadata().put(ResourceMetadataKeyEnum.PUBLISHED, publishedDate);
-        theQt.getResourceMetadata().put(ResourceMetadataKeyEnum.UPDATED, InstantDt.withCurrentTime());
-
-        Deque<Questionnaire> existingVersions = myIdToQVersions.get(theId);
-
-        // We just use the current number of versions as the next version number
-        String newVersion;
-        if (version == null) {
-            newVersion = Integer.toString(existingVersions.size());
-        } else {
-            newVersion = version;
-        }
-
-        // Create an ID with the new version and assign it back to the resource
-        IdDt newId = new IdDt("Questionnaire", theId, newVersion);
-        theQt.setId(newId);
-        existingVersions.add(theQt);
-    }
-*/
     @Read(version = true)
     public Questionnaire readQuestionnaire(@IdParam IdDt theId) {
         Deque<Questionnaire> retVal;
@@ -114,17 +58,5 @@ public class QuestionnaireResourceProvider extends C3PROResourceProvider impleme
         }
 
     }
-/*
-    @Search
-    public List<Questionnaire> findQuestionnairesUsingArbitraryCtriteria() {
-        LinkedList<Questionnaire> retVal = new LinkedList<>();
 
-        for (Deque<Questionnaire> nextQList : myIdToQVersions.values()) {
-            Questionnaire nextQ = nextQList.getLast();
-            retVal.add(nextQ);
-        }
-
-        return retVal;
-    }
-    */
 }

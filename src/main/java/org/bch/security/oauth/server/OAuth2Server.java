@@ -1,7 +1,7 @@
 package org.bch.security.oauth.server;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -26,7 +26,7 @@ import java.util.Date;
  * <a href="https://tools.ietf.org/html/draft-ietf-oauth-v2-31#section-4.4">this</a>
  */
 public class OAuth2Server extends HttpServlet {
-    private Logger log = LoggerFactory.getLogger(OAuth2Server.class);
+    private Log log = LogFactory.getLog(OAuth2Server.class);
 
     public static final long ONE_SECOND_IN_MILLIS = 1000;
     public static final int DEFAULT_TOKEN_SIZE= 64;

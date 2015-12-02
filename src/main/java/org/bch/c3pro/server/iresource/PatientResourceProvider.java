@@ -59,37 +59,6 @@ public class PatientResourceProvider extends C3PROResourceProvider implements IR
     public PatientResourceProvider() {
     }
 
-    /**
-     * The "@Create" annotation indicates that this method implements "create=type", which adds a
-     * new instance of a resource to the server.
-     */
-    /*
-    @Create()
-    public MethodOutcome createPatient(@ResourceParam Patient thePatient) {
-        String newId = generateNewId();
-        addNewVersion(thePatient, newId);
-        this.sendMessage(thePatient);
-
-        if (thePatient.getAddress()!=null) {
-            if (!thePatient.getAddress().isEmpty()) {
-                // We get just the first adress
-                AddressDt address = thePatient.getAddress().get(0);
-                if (address.getState()!=null) {
-                    try {
-                        Utils.updateMapInfo(address.getState(), this.s3, 1);
-                    } catch (C3PROException e) {
-                        log.error(e.getMessage());
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
-
-        // Let the caller know the ID of the newly created resource
-        return new MethodOutcome(new IdDt(newId));
-    }
-    */
-
     @Update()
     public MethodOutcome updatePatient(@ResourceParam Patient thePatient) {
         this.sendMessage(thePatient);
@@ -148,19 +117,6 @@ public class PatientResourceProvider extends C3PROResourceProvider implements IR
 
         existingVersions.add(thePatient);
     }
-/*
-    @Search
-    public List<Patient> findPatientsUsingArbitraryCtriteria() {
-        LinkedList<Patient> retVal = new LinkedList<Patient>();
-
-        for (Deque<Patient> nextPatientList : myIdToPatientVersions.values()) {
-            Patient nextPatient = nextPatientList.getLast();
-            retVal.add(nextPatient);
-        }
-
-        return retVal;
-    }
-*/
 
     /**
      * The getResourceType method comes from IResourceProvider, and must be overridden to indicate what type of resource this provider supplies.
@@ -170,35 +126,5 @@ public class PatientResourceProvider extends C3PROResourceProvider implements IR
         return Patient.class;
     }
 
-    /**
-     * This is the "read" operation. The "@Read" annotation indicates that this method supports the read and/or vread operation.
-     * <p>
-     * Read operations take a single parameter annotated with the {@link IdParam} paramater, and should return a single resource instance.
-     * </p>
-     *
-     * @param theId
-     *            The read operation takes one parameter, which must be of type IdDt and must be annotated with the "@Read.IdParam" annotation.
-     * @return Returns a resource matching this identifier, or null if none exists.
-     */
-    /*
-    @Read(version = true)
-    public Patient readPatient(@IdParam IdDt theId) {
-        Deque<Patient> retVal;
-        retVal = myIdToPatientVersions.get(theId.getIdPart());
 
-        if (theId.hasVersionIdPart() == false) {
-            return retVal.getLast();
-        } else {
-            for (Patient nextVersion : retVal) {
-                String nextVersionId = nextVersion.getId().getVersionIdPart();
-                if (theId.getVersionIdPart().equals(nextVersionId)) {
-                    return nextVersion;
-                }
-            }
-            // No matching version
-            throw new ResourceNotFoundException("Unknown version: " + theId.getValue());
-        }
-
-    }
-    */
 }

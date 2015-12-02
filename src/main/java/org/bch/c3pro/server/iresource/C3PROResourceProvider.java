@@ -3,15 +3,14 @@ package org.bch.c3pro.server.iresource;
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.model.dstu2.resource.BaseResource;
 import ca.uhn.fhir.parser.IParser;
-import com.amazonaws.services.opsworks.model.App;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.bch.c3pro.server.config.AppConfig;
 import org.bch.c3pro.server.exception.C3PROException;
 import org.bch.c3pro.server.external.Queue;
 import org.bch.c3pro.server.external.S3Access;
 import org.bch.c3pro.server.external.SQSAccess;
 import ca.uhn.fhir.rest.server.exceptions.InternalErrorException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.security.KeyFactory;
 import java.security.PublicKey;
@@ -24,7 +23,7 @@ public abstract class C3PROResourceProvider {
     protected Queue sqs = new SQSAccess();
     protected S3Access s3 = new S3Access();
 
-    Logger log = LoggerFactory.getLogger(C3PROResourceProvider.class);
+    Log log = LogFactory.getLog(C3PROResourceProvider.class);
 
     protected FhirContext ctx = FhirContext.forDstu2();
 

@@ -2,6 +2,8 @@ package org.bch.c3pro.server.external;
 
 import com.amazonaws.services.sqs.model.MessageAttributeValue;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.bch.c3pro.server.config.AppConfig;
 import org.bch.c3pro.server.exception.C3PROException;
 import com.amazonaws.auth.AWSCredentials;
@@ -11,8 +13,6 @@ import com.amazonaws.regions.Regions;
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.AmazonSQSClient;
 import com.amazonaws.services.sqs.model.SendMessageRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
@@ -29,7 +29,7 @@ import java.security.SecureRandom;
 public class SQSAccess implements Queue {
 
     private AmazonSQS sqs = null;
-    Logger log = LoggerFactory.getLogger(SQSAccess.class);
+    Log log = LogFactory.getLog(SQSAccess.class);
 
     @Override
     public void sendMessage(String resource) throws C3PROException {
