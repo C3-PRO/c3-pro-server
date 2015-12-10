@@ -16,13 +16,11 @@ Also, the system serves the following FHIR DSTU2-1.0.2 compliant rest methods (u
 information is encrypted in the server. We discourage the use of these methods in production, even when the
 the traffic goes through https:
 
-    HTTP/1.1 GET /c3pro/fhir/Questionnaire
+    HTTP/1.1 GET /c3pro/fhir/Questionnaire/{{questionnaire id}}
     HTTP/1.1 POST /c3pro/fhir/QuestionnaireResponse
     HTTP/1.1 POST /c3pro/fhir/Contract
     HTTP/1.1 POST /c3pro/fhir/Observation
-    HTTP/1.1 PUT /c3pro/fhir/Patient
-
-
+    HTTP/1.1 PUT /c3pro/fhir/Patient/{{patient id}}
 
 It uses oauth2 two legged for authorization, which needs an initial phase for registration:
 
@@ -258,6 +256,30 @@ And the corresponding variables in *configuration.properties* would look like:
     
 To obtain access keys and secrets from AWS, visit http://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSGettingStartedGuide/AWSCredentials.html. We suggest to create a user in AWS-IAM with only permissions to access S3 and SQS, and generate the access key and secret for this user.
 
+## Serving fhir questionnaires ##
+
+The following rest method
+
+    HTTP/1.1 GET /c3pro/fhir/Questionnaire/{{questionnaire id}}
+
+returns the json specification of the asked questionnaire resource:
+
+    HTTP/1.1 202 Accepted
+    Content-Type: application/json
+
+Internally, the json questionaires are stores statically in the S3 bucket. The format of the files is:
+
+    Questionnaire#{questionnaire_id}.json
+
+For example, the call
+
+    HTTP/1.1 GET /c3pro/fhir/Questionnaire/c-tracker.survey-in-app.main
+
+will server the content of the following file stored in the S3 bucket:
+
+    Questionnaire#c-tracker.survey-in-app.main.json
+
+
 ## Providing public key ##
 
 The system uses a public key uploaded in the S3 bucket to encrypt the symmetric key used to encrypt the resources in the SQS. The name of the public key file is specified in *configuration.propeties* file:
@@ -271,3 +293,76 @@ This name must match with an existing file in the used S3 bucket. The public key
 In this new version, public keys have associated an ID. This ID will be pushed along with the message in the SQS as a metadata, and will be used by the consumer to distinguish between different possible keys. The ID should be an UUID specified in a file stored in the S3 bucket. The name of the file is configurable in *configuration.propeties* and it's currently set as follows:
 
     app.security.publickey.id=public-c3pro.der.uuid
+
+## Configuration Parameters ##
+
+There is one configuration parameters file for each environment (dev, qa and prod). They are located here:
+
+    src/main/resources/dev/org/bch/c3pro/consumer/config/config.properties
+    src/main/resources/qa/org/bch/c3pro/consumer/config/config.properties
+    src/main/resources/prod/org/bch/c3pro/consumer/config/config.properties
+
+###Amazon sqs and s3 connectivity###
+
+*The url to the sqs to enque resources*
+    app.aws.sqs.url=https://sqs.us-west-2.amazonaws.com/875222989376/testQ
+
+*The profile used to connect to the sqs*
+    app.aws.sqs.profile=sqsqueue
+
+*The Amazon region where the sqs is located*
+    app.aws.sqs.region=us-west-2
+
+*The profile used to connect to the s3 bucket*
+    app.aws.s3.profile=sqsqueue
+
+*The name of the s3 bucket*
+    app.aws.s3.bucket=c3probuckettest
+
+*The Amazon region where the s3 buclet is located*
+    app.aws.s3.region=us-west-2
+
+###Properties related to encryption algorithms and parameters###
+See [https://bitbucket.org/ipinyol/c3pro-consumer](https://bitbucket.org/ipinyol/c3pro-consumer) for details. Both projects share these properties
+
+    app.security.publickey=public-c3pro.der
+    app.security.publickey.id=public-c3pro.der.uuid
+    app.security.metadatakey=pkey
+    app.security.metadatakeyid=pkey_id
+    app.fhir.metadata.version=version
+    app.security.secretkey.algorithm=AES/CBC/PKCS5Padding
+    app.security.secretkey.basealgorithm=AES
+    app.security.secretkey.size=16
+    app.security.publickey.algorithm=RSA/ECB/OAEPWithSHA1AndMGF1Padding
+    app.security.publickey.basealgorithm=RSA
+    app.security.encryption.enabled=yes
+
+###Base Map file###
+The filename of the json map file stored in the s3 bucket that computes persists the number of patients received for each US state.
+
+    app.mapcount.s3.filename=mapCount.json
+
+###iOS receipt verification###
+
+*The is provided by Apple*
+
+    app.ios.id=com.mindmobapp.MindMob
+
+*The sand box end point where to verify that the receipt is correct*
+
+    app.ios.verification.endpoint=https://sandbox.itunes.apple.com/verifyReceipt
+
+*The production end point where to verify that the receipt is correct*
+
+    app.ios.verificationtest.endpoint=https://sandbox.itunes.apple.com/verifyReceipt
+
+*The default fhir version in case it's not informed in the encrypted message.*
+
+    app.fhir.version.default=0.5.0
+
+###Other properties ###
+The system email registration errors
+
+    app.host.smtp=127.0.0.1
+    app.port.smtp=25
+    app.recipient.smtp=TEST@childrens.harvard.edu
