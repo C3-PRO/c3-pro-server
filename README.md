@@ -305,21 +305,27 @@ There is one configuration parameters file for each environment (dev, qa and pro
 ###Amazon sqs and s3 connectivity###
 
 *The url to the sqs to enque resources*
+
     app.aws.sqs.url=https://sqs.us-west-2.amazonaws.com/875222989376/testQ
 
 *The profile used to connect to the sqs*
+
     app.aws.sqs.profile=sqsqueue
 
 *The Amazon region where the sqs is located*
+
     app.aws.sqs.region=us-west-2
 
 *The profile used to connect to the s3 bucket*
+
     app.aws.s3.profile=sqsqueue
 
 *The name of the s3 bucket*
+
     app.aws.s3.bucket=c3probuckettest
 
 *The Amazon region where the s3 buclet is located*
+
     app.aws.s3.region=us-west-2
 
 ###Properties related to encryption algorithms and parameters###
