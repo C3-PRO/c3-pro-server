@@ -1,24 +1,26 @@
 #C3-PRO-Server#
 
-C3-PRO-Server is a highly reliable and scalable FHIR DSTU2 compliant web server, designed to cope with the traffic from mobile apps. The current version can only be deployed in AWS. It populates an AWS SQS with the FHIR resources that are POST. It does not consume the queue. A consumer can be found in the project [c3pro-consumer] (https://bitbucket.org/ipinyol/c3pro-consumer)
+C3-PRO-Server is a highly reliable and scalable FHIR DSTU2-1.0.2 compliant web server, designed to cope with the traffic from mobile apps. The current version can only be deployed in AWS. It populates an AWS SQS with the FHIR resources that are POST. It does not consume the queue. A consumer can be found in the project [c3pro-consumer] (https://bitbucket.org/ipinyol/c3pro-consumer)
 
-The system serves the following rest methods (unencrypted data):
-
-    HTTP/1.1 GET /c3pro/fhir/Questionnaire{{questionnaire id}}
-    HTTP/1.1 POST /c3pro/fhir/QuestionnaireAnswers
-    HTTP/1.1 POST /c3pro/fhir/Contract
-    HTTP/1.1 POST /c3pro/fhir/Observation
-    HTTP/1.1 PUT /c3pro/fhir/Patient{{patient id}}
-
-Also, the system servers encrypted POST fhir data through the following method
+The system servers encrypted POST fhir data through the following method
 
     HTTP/1.1 POST /c3pro/fhirenc/*
     {
-        "message":{{The encrypted fhir resource}}
-        "symmetric_key": {{The encrypted AES symmetric key used to encrypt the message}}
-        "key_id": {{The rsa key id used to encrypt the symmetric key}}
+        "message":{{The encrypted fhir resource}},
+        "symmetric_key": {{The encrypted AES symmetric key used to encrypt the message}},
+        "key_id": {{The rsa key id used to encrypt the symmetric key}},
+        "version": {{0.5.0 or 1.0.2}}
     }
 
+Also, the system serves the following FHIR DSTU2-1.0.2 compliant rest methods (unencrypted data). In this case, the
+information is encrypted in the server. We discourage the use of these methods in production, even when the
+the traffic goes through https:
+
+    HTTP/1.1 GET /c3pro/fhir/Questionnaire/{{questionnaire id}}
+    HTTP/1.1 POST /c3pro/fhir/QuestionnaireResponse
+    HTTP/1.1 POST /c3pro/fhir/Contract
+    HTTP/1.1 POST /c3pro/fhir/Observation
+    HTTP/1.1 PUT /c3pro/fhir/Patient/{{patient id}}
 
 It uses oauth2 two legged for authorization, which needs an initial phase for registration:
 
@@ -58,7 +60,7 @@ NOTE: According to [OAuth2 two-legged specifications](https://tools.ietf.org/htm
     {
       "access_token":"{{some token}}",
       "expires_in": "{{seconds to expiration}}",
-      "token_type": "bearer",
+      "token_type": "bearer"
     } 
 
 The Bearer token can be used in the rest calls that serve FHIR resources as authorization credentials.
@@ -254,6 +256,30 @@ And the corresponding variables in *configuration.properties* would look like:
     
 To obtain access keys and secrets from AWS, visit http://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSGettingStartedGuide/AWSCredentials.html. We suggest to create a user in AWS-IAM with only permissions to access S3 and SQS, and generate the access key and secret for this user.
 
+## Serving fhir questionnaires ##
+
+The following rest method
+
+    HTTP/1.1 GET /c3pro/fhir/Questionnaire/{{questionnaire id}}
+
+returns the json specification of the asked questionnaire resource:
+
+    HTTP/1.1 202 Accepted
+    Content-Type: application/json
+
+Internally, the json questionaires are stores statically in the S3 bucket. The format of the files is:
+
+    Questionnaire#{questionnaire_id}.json
+
+For example, the call
+
+    HTTP/1.1 GET /c3pro/fhir/Questionnaire/c-tracker.survey-in-app.main
+
+will server the content of the following file stored in the S3 bucket:
+
+    Questionnaire#c-tracker.survey-in-app.main.json
+
+
 ## Providing public key ##
 
 The system uses a public key uploaded in the S3 bucket to encrypt the symmetric key used to encrypt the resources in the SQS. The name of the public key file is specified in *configuration.propeties* file:
@@ -358,6 +384,10 @@ The filename of the json map file stored in the s3 bucket that computes persists
 *The production end point where to verify that the receipt is correct*
 
     app.ios.verificationtest.endpoint=https://sandbox.itunes.apple.com/verifyReceipt
+
+*The default fhir version in case it's not informed in the encrypted message.*
+
+    app.fhir.version.default=0.5.0
 
 ###Other properties ###
 The system email registration errors

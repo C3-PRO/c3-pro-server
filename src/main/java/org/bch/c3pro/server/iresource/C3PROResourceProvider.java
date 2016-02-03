@@ -3,15 +3,14 @@ package org.bch.c3pro.server.iresource;
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.model.dstu2.resource.BaseResource;
 import ca.uhn.fhir.parser.IParser;
-import com.amazonaws.services.opsworks.model.App;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.bch.c3pro.server.config.AppConfig;
 import org.bch.c3pro.server.exception.C3PROException;
 import org.bch.c3pro.server.external.Queue;
 import org.bch.c3pro.server.external.S3Access;
 import org.bch.c3pro.server.external.SQSAccess;
 import ca.uhn.fhir.rest.server.exceptions.InternalErrorException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.security.KeyFactory;
 import java.security.PublicKey;
@@ -24,12 +23,13 @@ public abstract class C3PROResourceProvider {
     protected Queue sqs = new SQSAccess();
     protected S3Access s3 = new S3Access();
 
-    Logger log = LoggerFactory.getLogger(C3PROResourceProvider.class);
+    Log log = LogFactory.getLog(C3PROResourceProvider.class);
 
     protected FhirContext ctx = FhirContext.forDstu2();
 
     protected void sendMessage(BaseResource resource) throws InternalErrorException {
         log.info("IN sendMessage");
+        String version="";
         IParser jsonParser = this.ctx.newJsonParser();
         jsonParser.setPrettyPrint(true);
         String message = jsonParser.encodeResourceToString(resource);
@@ -42,6 +42,7 @@ public abstract class C3PROResourceProvider {
                 try {
                     publicKeyBin = this.s3.getBinary(AppConfig.getProp(AppConfig.SECURITY_PUBLICKEY));
                     publicKeyUUID = this.s3.get(AppConfig.getProp(AppConfig.SECURITY_PUBLICKEY_ID));
+                    version = AppConfig.getProp(AppConfig.FHIR_VERSION_DEFAULT);
                 } catch (C3PROException e) {
                     log.error(e.getMessage());
                     throw new InternalErrorException("Error reading public key or public key uuid from AWS S3", e);
@@ -49,7 +50,7 @@ public abstract class C3PROResourceProvider {
                 X509EncodedKeySpec publicSpec = new X509EncodedKeySpec(publicKeyBin);
                 KeyFactory keyFactory = KeyFactory.getInstance(AppConfig.getProp(AppConfig.SECURITY_PUBLICKEY_BASEALG));
                 PublicKey publicKey = keyFactory.generatePublic(publicSpec);
-                sqs.sendMessageEncrypted(message, publicKey, publicKeyUUID);
+                sqs.sendMessageEncrypted(message, publicKey, publicKeyUUID, version);
             }
         } catch (Exception e) {
             e.printStackTrace();

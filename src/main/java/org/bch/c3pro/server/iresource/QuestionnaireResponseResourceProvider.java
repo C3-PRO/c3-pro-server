@@ -1,24 +1,22 @@
 package org.bch.c3pro.server.iresource;
 
 import ca.uhn.fhir.model.api.ResourceMetadataKeyEnum;
-import ca.uhn.fhir.model.dstu2.resource.Observation;
+import ca.uhn.fhir.model.dstu2.resource.QuestionnaireResponse;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.model.primitive.InstantDt;
-import ca.uhn.fhir.rest.annotation.*;
+import ca.uhn.fhir.rest.annotation.Create;
+import ca.uhn.fhir.rest.annotation.ResourceParam;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 
 import java.util.*;
 
 /**
- * Created with IntelliJ IDEA.
- * User: CH176656
- * Date: 7/20/15
- * Time: 1:14 PM
- * To change this template use File | Settings | File Templates.
+ * Created by CH176656 on 4/30/2015.
  */
-public class ObservationResourceProvider extends C3PROResourceProvider implements IResourceProvider {
-    private Map<String, Deque<Observation>> myIdToQVersions = new HashMap<>();
+public class QuestionnaireResponseResourceProvider extends C3PROResourceProvider implements IResourceProvider  {
+
+    private Map<String, Deque<QuestionnaireResponse>> myIdToQVersions = new HashMap<>();
 
     @Override
     protected String generateNewId() {
@@ -26,31 +24,31 @@ public class ObservationResourceProvider extends C3PROResourceProvider implement
     }
 
     @Override
-    public Class<Observation> getResourceType() {
-        return Observation.class;
+    public Class<QuestionnaireResponse> getResourceType() {
+        return QuestionnaireResponse.class;
     }
 
     @Override
     protected Class getResourceClass() {
-        return Observation.class;
+        return QuestionnaireResponse.class;
     }
 
     @Create()
-    public MethodOutcome createObservation(@ResourceParam Observation theQA) {
+    public MethodOutcome createQA(@ResourceParam QuestionnaireResponse theQR) {
         String newId = generateNewId();
-        addNewVersion(theQA, newId);
-        this.sendMessage(theQA);
+        addNewVersion(theQR, newId);
+        this.sendMessage(theQR);
         // Let the caller know the ID of the newly created resource
         return new MethodOutcome(new IdDt(newId));
     }
 
-    private void addNewVersion(Observation theQA, String theId) {
+    private void addNewVersion(QuestionnaireResponse theQA, String theId) {
         InstantDt publishedDate;
         if (!myIdToQVersions.containsKey(theId)) {
-            myIdToQVersions.put(theId, new LinkedList<Observation>());
+            myIdToQVersions.put(theId, new LinkedList<QuestionnaireResponse>());
             publishedDate = InstantDt.withCurrentTime();
         } else {
-            Observation currentQA = myIdToQVersions.get(theId).getLast();
+            QuestionnaireResponse currentQA = myIdToQVersions.get(theId).getLast();
             Map<ResourceMetadataKeyEnum<?>, Object> resourceMetadata = currentQA.getResourceMetadata();
             publishedDate = (InstantDt) resourceMetadata.get(ResourceMetadataKeyEnum.PUBLISHED);
         }
@@ -61,15 +59,14 @@ public class ObservationResourceProvider extends C3PROResourceProvider implement
         theQA.getResourceMetadata().put(ResourceMetadataKeyEnum.PUBLISHED, publishedDate);
         theQA.getResourceMetadata().put(ResourceMetadataKeyEnum.UPDATED, InstantDt.withCurrentTime());
 
-        Deque<Observation> existingVersions = myIdToQVersions.get(theId);
+        Deque<QuestionnaireResponse> existingVersions = myIdToQVersions.get(theId);
 
         // We just use the current number of versions as the next version number
         String newVersion = Integer.toString(existingVersions.size());
 
         // Create an ID with the new version and assign it back to the resource
-        IdDt newId = new IdDt("QuestionnaireAnswers", theId, newVersion);
+        IdDt newId = new IdDt("QuestionnaireResponse", theId, newVersion);
         theQA.setId(newId);
         existingVersions.add(theQA);
     }
-
 }

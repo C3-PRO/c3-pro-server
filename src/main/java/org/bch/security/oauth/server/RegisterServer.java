@@ -2,6 +2,8 @@ package org.bch.security.oauth.server;
 
 import com.amazonaws.services.route53.model.ResourceRecordSet;
 import org.apache.axiom.om.util.Base64;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.bch.c3pro.server.config.AppConfig;
 import org.bch.c3pro.server.exception.C3PROException;
 import org.bch.c3pro.server.util.Mail;
@@ -9,8 +11,6 @@ import org.bch.c3pro.server.util.Utils;
 import org.jboss.security.auth.spi.Util;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.naming.InitialContext;
 import javax.servlet.ServletException;
@@ -34,7 +34,7 @@ import java.util.UUID;
  * Registration server for credentials generation
  */
 public class RegisterServer extends HttpServlet {
-    private Logger log = LoggerFactory.getLogger(RegisterServer.class);
+    private Log log = LogFactory.getLog(RegisterServer.class);
 
     protected static final String CONF_PARAM_HASH_ALGORITHM = "hashAlgorithm";
     protected static final String CONF_PARAM_DATASOURCE = "dataSource";

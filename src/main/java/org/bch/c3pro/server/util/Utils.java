@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Simple utilities to read files
+ * Simple utilities to read files and other general constants
  * Created by CH176656 on 3/26/2015.
  */
 public class Utils {

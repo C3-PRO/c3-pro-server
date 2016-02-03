@@ -2,6 +2,8 @@ package org.bch.c3pro.server.external;
 
 import com.amazonaws.services.sqs.model.MessageAttributeValue;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.bch.c3pro.server.config.AppConfig;
 import org.bch.c3pro.server.exception.C3PROException;
 import com.amazonaws.auth.AWSCredentials;
@@ -11,8 +13,6 @@ import com.amazonaws.regions.Regions;
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.AmazonSQSClient;
 import com.amazonaws.services.sqs.model.SendMessageRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
@@ -29,7 +29,7 @@ import java.security.SecureRandom;
 public class SQSAccess implements Queue {
 
     private AmazonSQS sqs = null;
-    Logger log = LoggerFactory.getLogger(SQSAccess.class);
+    Log log = LogFactory.getLog(SQSAccess.class);
 
     @Override
     public void sendMessage(String resource) throws C3PROException {
@@ -38,7 +38,8 @@ public class SQSAccess implements Queue {
     }
 
     @Override
-    public void sendMessageEncrypted(String resource, PublicKey publicKey, String UUIDKey) throws C3PROException {
+    public void sendMessageEncrypted(String resource, PublicKey publicKey, String UUIDKey, String version)
+            throws C3PROException {
 
         setCredentials();
 
@@ -69,11 +70,11 @@ public class SQSAccess implements Queue {
             throw new C3PROException(e.getMessage(), e);
         }
 
-        pushMessage(Base64.encodeBase64String(encResource), Base64.encodeBase64String(encKeyToSend), UUIDKey);
+        pushMessage(Base64.encodeBase64String(encResource), Base64.encodeBase64String(encKeyToSend), UUIDKey, version);
 
     }
 
-    private void pushMessage(String msg, String key, String uuid) throws C3PROException{
+    private void pushMessage(String msg, String key, String uuid, String version) throws C3PROException{
         setCredentials();
         // We send the encrypted message to the Queue. We Base64 encode it
         SendMessageRequest mse = new SendMessageRequest(AppConfig.getProp(AppConfig.AWS_SQS_URL), msg);
@@ -90,6 +91,11 @@ public class SQSAccess implements Queue {
         atr.setStringValue(uuid);
         atr.setDataType("String");
         mse.addMessageAttributesEntry(AppConfig.getProp(AppConfig.SECURITY_METADATAKEYID), atr);
+
+        atr = new MessageAttributeValue();
+        atr.setStringValue(version);
+        atr.setDataType("String");
+        mse.addMessageAttributesEntry(AppConfig.getProp(AppConfig.FHIR_METADATA_VERSION), atr);
 
         try {
             this.sqs.sendMessage(mse);
@@ -128,8 +134,9 @@ public class SQSAccess implements Queue {
         return out;
     }
 
-    public void sendMessageAlreadyEncrypted(String resource, String key, String UUIDKey) throws C3PROException {
-        pushMessage(resource, key, UUIDKey);
+    public void sendMessageAlreadyEncrypted(String resource, String key, String UUIDKey, String version)
+            throws C3PROException {
+        pushMessage(resource, key, UUIDKey, version);
     }
 
     private void setCredentials() throws C3PROException {
