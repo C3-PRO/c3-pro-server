@@ -3,7 +3,8 @@ package org.bch.c3pro.server.servlet;
 import org.bch.security.oauth.server.OAuth2Server;
 
 /**
- * Created by CH176656 on 5/20/2015.
+ * The Oauth fhir server class. See {@link OAuth2Server}
+ * @author CHIP-IHL
  */
 public class FHIROAuthServer extends OAuth2Server {
     protected String getDatasourceName() {

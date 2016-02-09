@@ -24,19 +24,33 @@ import java.security.PublicKey;
 import java.security.SecureRandom;
 
 /**
- * Created by CH176656 on 5/1/2015.
+ * Implements the access to a Amazon SQS queue
+ * @author CHIP-IHL
  */
 public class SQSAccess implements Queue {
 
     private AmazonSQS sqs = null;
     Log log = LogFactory.getLog(SQSAccess.class);
 
+    /**
+     * Sends a message to the SQS
+     * @param resource  The payload
+     * @throws C3PROException In case access to SQS is not possible
+     */
     @Override
     public void sendMessage(String resource) throws C3PROException {
         setCredentials();
         this.sqs.sendMessage(new SendMessageRequest(AppConfig.getProp(AppConfig.AWS_SQS_URL), resource));
     }
 
+    /**
+     * Sends an encrypted message to the SQS (See documentation)
+     * @param resource  The resource
+     * @param publicKey The public key used to encrypt the symetric key
+     * @param UUIDKey   the if of the key
+     * @param version   The version
+     * @throws C3PROException In case access to SQS is not possible
+     */
     @Override
     public void sendMessageEncrypted(String resource, PublicKey publicKey, String UUIDKey, String version)
             throws C3PROException {
@@ -106,6 +120,11 @@ public class SQSAccess implements Queue {
 
     }
 
+    /**
+     * Generates a secret symmetric key
+     * @return The generated key
+     * @throws C3PROException In case an error occurs during the generation
+     */
     public SecretKey generateSecretKey() throws C3PROException {
         SecretKey key = null;
 
@@ -121,6 +140,13 @@ public class SQSAccess implements Queue {
         return key;
     }
 
+    /**
+     * Encrypts the given byte array using the provided public key using RSA
+     * @param key   The public key
+     * @param text  The message to encrypt
+     * @return      The encrypted message
+     * @throws C3PROException In case an error occurs during the encryption
+     */
     public byte[] encryptRSA(PublicKey key, byte[] text) throws C3PROException {
         Cipher cipher = null;
         byte [] out = null;
@@ -134,6 +160,13 @@ public class SQSAccess implements Queue {
         return out;
     }
 
+    /**
+     * Sends an ALREADY encrypted message to the SQS (See documentation)
+     * @param resource  The resource
+     * @param UUIDKey   the if of the key
+     * @param version   The version
+     * @throws C3PROException In case access to SQS is not possible
+     */
     public void sendMessageAlreadyEncrypted(String resource, String key, String UUIDKey, String version)
             throws C3PROException {
         pushMessage(resource, key, UUIDKey, version);

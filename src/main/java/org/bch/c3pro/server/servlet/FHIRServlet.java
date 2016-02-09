@@ -10,7 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by CH176656 on 4/30/2015.
+ * The fhir servlet to accept fhir rest methods
+ * @author CHIP-IHL
  */
 public class FHIRServlet extends RestfulServer {
     private static final long serialVersionUID = 1L;

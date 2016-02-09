@@ -17,7 +17,8 @@ import java.security.PublicKey;
 import java.security.spec.X509EncodedKeySpec;
 
 /**
- * Created by CH176656 on 5/4/2015.
+ * Abstract class for common resource provider methods
+ * @author CHIP-IHL
  */
 public abstract class C3PROResourceProvider {
     protected Queue sqs = new SQSAccess();
@@ -28,7 +29,6 @@ public abstract class C3PROResourceProvider {
     protected FhirContext ctx = FhirContext.forDstu2();
 
     protected void sendMessage(BaseResource resource) throws InternalErrorException {
-        log.info("IN sendMessage");
         String version="";
         IParser jsonParser = this.ctx.newJsonParser();
         jsonParser.setPrettyPrint(true);

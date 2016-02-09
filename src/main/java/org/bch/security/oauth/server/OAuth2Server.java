@@ -21,9 +21,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * Created by CH176656 on 5/20/2015.
- * Follows specifications for oauth2 two legged according to
+ *
+ * Servlet that implements the oauth2 two legged protocol according to
  * <a href="https://tools.ietf.org/html/draft-ietf-oauth-v2-31#section-4.4">this</a>
+ * @author CHIP-IHL
  */
 public class OAuth2Server extends HttpServlet {
     private Log log = LogFactory.getLog(OAuth2Server.class);
@@ -61,6 +62,13 @@ public class OAuth2Server extends HttpServlet {
         return out;
     }
 
+    /**
+     * The POST handle
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     */
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String grantType = request.getParameter(GRANT_TYPE);
         if (grantType==null) {

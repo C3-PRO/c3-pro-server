@@ -18,11 +18,18 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import java.io.*;
 
 /**
- * Created by CH176656 on 5/4/2015.
+ * Implements the access to Amazon S3 bucket
+ * @author CHIP-IHL
  */
 public class S3Access implements KeyValueStorage {
     private AmazonS3 s3 = null;
 
+    /**
+     * Stores the pair key/value in S3
+     * @param key   The key
+     * @param value The value
+     * @throws C3PROException In case S3 is not accessible
+     */
     @Override
     public void put(String key, String value) throws C3PROException {
         setCredentials();
@@ -39,6 +46,12 @@ public class S3Access implements KeyValueStorage {
         s3.putObject(new PutObjectRequest(AppConfig.getProp(AppConfig.AWS_S3_BUCKET_NAME), key, in, om));
     }
 
+    /**
+     * Gets the value (as text) from S3 given the key
+     * @param key   The key
+     * @return      The value
+     * @throws C3PROException In case S3 is not accessible
+     */
     @Override
     public String get(String key) throws C3PROException {
         setCredentials();
@@ -47,6 +60,12 @@ public class S3Access implements KeyValueStorage {
         return out;
     }
 
+    /**
+     * Gets the value (as binary) from S3 given the key
+     * @param key   The key
+     * @return      The value
+     * @throws C3PROException In case S3 is not accessible
+     */
     @Override
     public byte[] getBinary(String key) throws C3PROException {
         setCredentials();

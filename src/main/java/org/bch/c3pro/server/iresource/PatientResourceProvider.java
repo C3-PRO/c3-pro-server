@@ -31,7 +31,8 @@ import org.bch.c3pro.server.util.Utils;
 import java.util.*;
 
 /**
- * Created by CH176656 on 4/30/2015.
+ * The Patient resource provider class
+ * @author CHIP-IHL
  */
 public class PatientResourceProvider extends C3PROResourceProvider implements IResourceProvider {
 
@@ -59,6 +60,11 @@ public class PatientResourceProvider extends C3PROResourceProvider implements IR
     public PatientResourceProvider() {
     }
 
+    /**
+     * The patient PUT handle
+     * @param thePatient
+     * @return
+     */
     @Update()
     public MethodOutcome updatePatient(@ResourceParam Patient thePatient) {
         this.sendMessage(thePatient);
@@ -81,44 +87,9 @@ public class PatientResourceProvider extends C3PROResourceProvider implements IR
         return new MethodOutcome();
     }
 
-    /**
-     * Stores a new version of the patient in memory so that it can be retrieved later.
-     *
-     * @param thePatient
-     *            The patient resource to store
-     * @param theId
-     *            The ID of the patient to retrieve
-     */
-    private void addNewVersion(Patient thePatient, String theId) {
-        InstantDt publishedDate;
-        if (!myIdToPatientVersions.containsKey(theId)) {
-            myIdToPatientVersions.put(theId, new LinkedList<Patient>());
-            publishedDate = InstantDt.withCurrentTime();
-        } else {
-            Patient currentPatient = myIdToPatientVersions.get(theId).getLast();
-            Map<ResourceMetadataKeyEnum<?>, Object> resourceMetadata = currentPatient.getResourceMetadata();
-            publishedDate = (InstantDt) resourceMetadata.get(ResourceMetadataKeyEnum.PUBLISHED);
-        }
-
-		/*
-		 * PUBLISHED time will always be set to the time that the first version was stored. UPDATED time is set to the time that the new version was stored.
-		 */
-        thePatient.getResourceMetadata().put(ResourceMetadataKeyEnum.PUBLISHED, publishedDate);
-        thePatient.getResourceMetadata().put(ResourceMetadataKeyEnum.UPDATED, InstantDt.withCurrentTime());
-
-        Deque<Patient> existingVersions = myIdToPatientVersions.get(theId);
-
-        // We just use the current number of versions as the next version number
-        String newVersion = Integer.toString(existingVersions.size());
-
-        // Create an ID with the new version and assign it back to the resource
-        IdDt newId = new IdDt("Patient", theId, newVersion);
-        thePatient.setId(newId);
-
-        existingVersions.add(thePatient);
-    }
 
     /**
+     * Returns the resource type: Patient
      * The getResourceType method comes from IResourceProvider, and must be overridden to indicate what type of resource this provider supplies.
      */
     @Override

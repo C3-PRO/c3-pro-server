@@ -12,7 +12,8 @@ import ca.uhn.fhir.rest.server.IResourceProvider;
 import java.util.*;
 
 /**
- * Created by CH176656 on 4/30/2015.
+ * QustionnaireResponse resource provider class
+ * @author CHIP-IHL
  */
 public class QuestionnaireResponseResourceProvider extends C3PROResourceProvider implements IResourceProvider  {
 
@@ -23,6 +24,10 @@ public class QuestionnaireResponseResourceProvider extends C3PROResourceProvider
         return UUID.randomUUID().toString();
     }
 
+    /**
+     * Returns the resource type: QuestionnaireResponse
+     * @return
+     */
     @Override
     public Class<QuestionnaireResponse> getResourceType() {
         return QuestionnaireResponse.class;
@@ -33,6 +38,11 @@ public class QuestionnaireResponseResourceProvider extends C3PROResourceProvider
         return QuestionnaireResponse.class;
     }
 
+    /**
+     * The QuestionnaireResponse POST handle
+     * @param theQR The QuestionnaireResponse
+     * @return
+     */
     @Create()
     public MethodOutcome createQA(@ResourceParam QuestionnaireResponse theQR) {
         String newId = generateNewId();

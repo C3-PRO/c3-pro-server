@@ -7,13 +7,27 @@ import java.io.IOException;
 import java.io.Writer;
 
 /**
- * Created by CH176656 on 5/19/2015.
+ * Filter for end points that need protection via oauth2
+ * @author CHIP-IHL
  */
 public class OAuthFilter implements Filter {
 
+    /**
+     * The init filter
+     * @param filterConfig
+     * @throws ServletException
+     */
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {}
 
+    /**
+     * The doFilter method
+     * @param servletRequest
+     * @param servletResponse
+     * @param filterChain
+     * @throws IOException
+     * @throws ServletException
+     */
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
             throws IOException, ServletException {
@@ -31,6 +45,9 @@ public class OAuthFilter implements Filter {
         }
     }
 
+    /**
+     * The destroy method
+     */
     @Override
     public void destroy() {}
 

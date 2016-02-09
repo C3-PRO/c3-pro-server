@@ -11,14 +11,29 @@ import java.io.Writer;
 import java.net.URLDecoder;
 
 /**
- * Created by CH176656 on 6/2/2015.
+ * Filter for the oauth server.
+ * Expects BASIC authentication, which is validated through the standard LoginModule
+ * @author CHIP-IHL
  */
 public class OAuthServerFilter implements Filter{
     private static String BASIC_AUTH = "Basic";
 
+    /**
+     * The init method
+     * @param filterConfig
+     * @throws ServletException
+     */
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {}
 
+    /**
+     * The doFilter method
+     * @param servletRequest
+     * @param servletResponse
+     * @param filterChain
+     * @throws IOException
+     * @throws ServletException
+     */
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
             throws IOException, ServletException {
@@ -55,6 +70,9 @@ public class OAuthServerFilter implements Filter{
         }
     }
 
+    /**
+     * The destroy method
+     */
     @Override
     public void destroy() {}
 

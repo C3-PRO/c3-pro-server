@@ -1,6 +1,5 @@
 package org.bch.security.oauth.server;
 
-import com.amazonaws.services.route53.model.ResourceRecordSet;
 import org.apache.axiom.om.util.Base64;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -30,8 +29,8 @@ import java.util.Random;
 import java.util.UUID;
 
 /**
- * Created by CH176656 on 5/29/2015.
- * Registration server for credentials generation
+ * Servlet that implements the registration of clients for oauth2 protocol
+ * @author CHIP-IHL
  */
 public class RegisterServer extends HttpServlet {
     private Log log = LogFactory.getLog(RegisterServer.class);
@@ -73,6 +72,13 @@ public class RegisterServer extends HttpServlet {
             "  \"token_endpoint_auth_method\":\"client_secret_basic\",\n" +
             "}";
 
+    /**
+     * The POST handle
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     */
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         boolean validationOK=false;
 

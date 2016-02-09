@@ -18,11 +18,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created with IntelliJ IDEA.
- * User: CH176656
- * Date: 8/5/15
- * Time: 10:07 AM
- * To change this template use File | Settings | File Templates.
+ * Servlet that returns the map.svg depicting US participation per state
+ * @author CHIP-IHL
  */
 public class USMap extends HttpServlet {
     private static final String [] classes = {".xx", ".q1", ".q5", ".q20", ".q100"};

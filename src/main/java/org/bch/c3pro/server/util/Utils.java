@@ -15,8 +15,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Simple utilities to read files and other general constants
- * Created by CH176656 on 3/26/2015.
+ * Simple utility class to read files and to hold general constants
+ * @author CHIP-IHL
  */
 public class Utils {
 
@@ -93,6 +93,16 @@ public class Utils {
 
     public static final String TOTAL_LABEL = "TOTAL";
 
+    /**
+     * Reads a text file under resource and appends it in a String Buffer
+     * Example textFileToStringBuffer(FileUtils.class, "hello.txt", sb, "\n")
+     * It will read the file "hello.txt" located where FileUtils.class is located
+     * @param cl        The Class
+     * @param fileName  The filename
+     * @param sb        The StringBuffer
+     * @param sep       The line separator
+     * @throws Exception
+     */
     public static void textFileToStringBuffer(Class cl, String fileName, StringBuffer sb, String sep)
 throws IOException {
         InputStream in = cl.getResourceAsStream(fileName);
@@ -108,7 +118,14 @@ throws IOException {
     }
 
 
-    // We synchronized the method to avoid mis counting: Only one thread at a time can execute the method
+    /**
+     * Update the counts for the map of the given state
+     * We synchronized the method to avoid mis counting.
+     * @param state     The state being updated
+     * @param s3        The S3 access object
+     * @param num       The number to be added to the count of the state
+     * @throws C3PROException In case an error occurs
+     */
     synchronized public static void updateMapInfo(String state, S3Access s3, int num) throws C3PROException {
         String filename = AppConfig.getProp(AppConfig.APP_FILENAME_MAPCOUNT);
         String jsonContent = s3.get(filename);
@@ -143,28 +160,12 @@ throws IOException {
         }
     }
 
-    public static String generateURL(String protocol, String host, String port, String endpoint) {
-        StringBuffer sb = new StringBuffer();
-        sb.append(protocol);
-        sb.append("://");
-        sb.append(host);
-        if (!port.trim().equals("")) {
-            sb.append(":");
-            sb.append(port);
-        }
-        sb.append(endpoint);
-        return sb.toString();
-    }
-
-    public static Date subtractDays(Date date, int days) {
-        Date dateWindow = new Date();
-        Calendar c = Calendar.getInstance();
-        c.setTime(date);
-        c.add(Calendar.DATE, -days);
-        dateWindow.setTime(c.getTime().getTime());
-        return dateWindow;
-    }
-
+    /**
+     * Reads the content of POST request
+     * @param request   The request
+     * @return  The content
+     * @throws IOException In case of input error
+     */
     public static String getPostContent(HttpServletRequest request) throws IOException {
         StringBuilder sb = new StringBuilder();
         BufferedReader reader = request.getReader();
@@ -175,6 +176,13 @@ throws IOException {
         return sb.toString();
     }
 
+    /**
+     * Sends json error message through http response
+     * @param response  The http servlet response
+     * @param msg       The message
+     * @param code      The http status code
+     * @throws IOException In case of output error
+     */
     public static void sendJSONError(HttpServletResponse response, String msg, int code) throws IOException {
         response.setContentType("application/json");
         PrintWriter out = response.getWriter();
@@ -183,6 +191,11 @@ throws IOException {
         response.setStatus(code);
     }
 
+    /**
+     * Get the state abbreviation
+     * @param state The state
+     * @return the abbreviation
+     */
     public static String getStateAbbr(String state) {
         String st = state.toLowerCase();
         if (Utils.stateMapAbbr.isEmpty()) {

@@ -14,15 +14,16 @@ import javax.mail.internet.MimeMessage;
 import java.util.Properties;
 
 /**
- * Created by ipinyol on 9/11/15.
+ * Utility class for sending emails via postfix
+ * @author CHIP-IHL
  */
 public class Mail {
 
     /**
      * Send an email if 'msg' contains 'error', with subject: prefix + error and body:msg
-     * @param prefix
-     * @param msg
-     * @param error
+     * @param prefix the prefix
+     * @param msg   the message
+     * @param error the error message
      */
     public static void emailIfError(String prefix, String msg, String error) {
         if (msg.contains(error)) {
@@ -32,8 +33,8 @@ public class Mail {
 
     /**
      * Sends an email with subject and body text to the recipient in the config.properties
-     * @param subject
-     * @param text
+     * @param subject the subject
+     * @param text  the text
      */
     public static void send(String subject, String text) {
         Properties props = new Properties();

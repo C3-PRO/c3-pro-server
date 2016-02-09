@@ -11,12 +11,9 @@ import ca.uhn.fhir.rest.server.IResourceProvider;
 import java.util.*;
 
 /**
- * Created with IntelliJ IDEA.
- * User: CH176656
- * Date: 7/20/15
- * Time: 1:14 PM
- * To change this template use File | Settings | File Templates.
- */
+ * The observation resource provider class
+ * @author CHIP-IHL
+*/
 public class ObservationResourceProvider extends C3PROResourceProvider implements IResourceProvider {
     private Map<String, Deque<Observation>> myIdToQVersions = new HashMap<>();
 
@@ -25,6 +22,10 @@ public class ObservationResourceProvider extends C3PROResourceProvider implement
         return UUID.randomUUID().toString();
     }
 
+    /**
+     * Returns the resource type: Observation
+     * @return
+     */
     @Override
     public Class<Observation> getResourceType() {
         return Observation.class;
@@ -35,6 +36,11 @@ public class ObservationResourceProvider extends C3PROResourceProvider implement
         return Observation.class;
     }
 
+    /**
+     * Create Observation POST handle
+     * @param theQA The observation
+     * @return
+     */
     @Create()
     public MethodOutcome createObservation(@ResourceParam Observation theQA) {
         String newId = generateNewId();

@@ -18,7 +18,8 @@ import java.sql.SQLException;
 import java.util.Map;
 
 /**
- * Created by CH176656 on 5/19/2015.
+ * Extension of the standard DatabaseServerLoginModule class to incorporate oauth2 and bearer tokens
+ * @author CHIP-IHL
  */
 public class OAuth2LoginModule extends DatabaseServerLoginModule {
     protected static final String AUTHORIZATION_HEADER="Authorization";

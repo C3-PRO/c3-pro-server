@@ -12,7 +12,8 @@ import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 import java.util.*;
 
 /**
- * Created by CH176656 on 5/7/2015.
+ * ConceptResouece provider class
+ * @author CHIP-IHL
  */
 public class ConsentResourceProvider extends C3PROResourceProvider implements IResourceProvider {
 
@@ -23,6 +24,10 @@ public class ConsentResourceProvider extends C3PROResourceProvider implements IR
         return UUID.randomUUID().toString();
     }
 
+    /**
+     * Returns the resource type: Contract
+     * @return
+     */
     @Override
     public Class<Contract> getResourceType() {
         return Contract.class;
@@ -33,6 +38,11 @@ public class ConsentResourceProvider extends C3PROResourceProvider implements IR
         return Contract.class;
     }
 
+    /**
+     * Create contract POST handle
+     * @param theContract The contract resource
+     * @return
+     */
     @Create()
     public MethodOutcome createContract(@ResourceParam Contract theContract) {
         String newId = generateNewId();

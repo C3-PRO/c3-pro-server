@@ -8,8 +8,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 /**
- * Created by CH176656 on 6/2/2015.
- * JSON Error response class following <a href='http://tools.ietf.org/html/rfc6749#section-5.2'>RFC 6749</a>
+ * Class that handles json ERROR return messages accoring to
+ * <a href='http://tools.ietf.org/html/rfc6749#section-5.2'>RFC 6749</a>
+ * @author CHIP-IHL
  */
 public class ErrorReturn {
 
@@ -63,22 +64,44 @@ public class ErrorReturn {
         }
     }
 
+    /**
+     * Returns the error tye
+     * @return the error type
+     */
     public ErrorType getErrorType() {
         return errorType;
     }
 
+    /**
+     * Sets the error type
+     * @param errorType The new error type
+     */
     public void setErrorType(ErrorType errorType) {
         this.errorType = errorType;
     }
 
+    /**
+     * Returns error description
+     * @return the error description
+     */
     public String getErrorDesc() {
         return errorDesc;
     }
 
+    /**
+     * Sets the error description
+     * @param errorDesc The new error description
+     */
     public void setErrorDesc(String errorDesc) {
         this.errorDesc = errorDesc;
     }
 
+    /**
+     * Write the error message to the http servlet response
+     * @param response  The http servlet response
+     * @param errorCode The http status code
+     * @throws IOException In case of I/O error
+     */
     public void writeError(HttpServletResponse response, int errorCode) throws IOException {
         String message = this.toString();
         response.setContentType("application/json");

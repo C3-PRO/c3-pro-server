@@ -11,8 +11,8 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * Configuration file
- * Created by CH176656 on 3/20/2015.
+ * Class that manages the configuration parameters
+ * @author CHIP-IHL
  */
 public class AppConfig {
 
@@ -89,34 +89,16 @@ public class AppConfig {
         }
     }
 
-
+    /**
+     * Get the value of the property described in conf.properties file
+     * @param key The key of the property
+     * @return The value of the property.
+     * @throws C3PROException If the property key does not exist.
+     */
     public static String getProp(String key) throws C3PROException {
         if (prop.isEmpty()) {
             uploadConfiguration();
         }
         return prop.getProperty(key);
-    }
-
-    public static String getAuthCredentials(String key) throws IOException, C3PROException {
-        String path = getProp(key);
-        String finalPath = path;
-        int i = path.indexOf("[");
-        int j = path.indexOf("]");
-        if (i<0 && j>=0) throw new C3PROException("Missing [ in " + key);
-        if (i>=0) {
-            if (j<0) throw new C3PROException("Missing ] in " + key);
-            String var = path.substring(i+1,j);
-            String aux = System.getenv(var);
-            if (aux == null) aux = "";
-            finalPath = path.replaceAll("\\[" + var + "\\]", aux);
-        }
-        FileInputStream inputStream = new FileInputStream(finalPath);
-        String out=null;
-        try {
-            out = IOUtils.toString(inputStream).trim();
-        } finally {
-            inputStream.close();
-        }
-        return out;
     }
 }
