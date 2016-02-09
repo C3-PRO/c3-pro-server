@@ -18,6 +18,10 @@ public class ErrorReturn {
     private static String JSON_TAG_ERROR_DESC = "error_description";
     private static String JSON_TAG_ERROR_URI = "error_uri";
 
+    /**
+     * Enum type with valid error tags
+     * @author CHIP-IHL
+     */
     public static enum ErrorType {
         ERROR_INVALID_REQUEST("invalid_request"),
         ERROR_INVALID_CLIENT("invalid_client"),

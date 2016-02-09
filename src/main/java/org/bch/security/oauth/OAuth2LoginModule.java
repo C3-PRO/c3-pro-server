@@ -36,10 +36,10 @@ public class OAuth2LoginModule extends DatabaseServerLoginModule {
     /**
      * Initialize the module.
      * Grab the configuration parameters
-     * @param subject
-     * @param callbackHandler
-     * @param sharedState
-     * @param options
+     * @param subject       The authenticator subject
+     * @param callbackHandler The callback handle
+     * @param sharedState   The share state map
+     * @param options       The configuration options
      */
     @Override
     public void initialize(Subject subject, CallbackHandler callbackHandler,
@@ -56,7 +56,7 @@ public class OAuth2LoginModule extends DatabaseServerLoginModule {
     /**
      * Override the login method.
      * We detect if using Bearer Authentication
-     * @return
+     * @return True is Bearer authentication is used
      */
     @Override
     public boolean login() {

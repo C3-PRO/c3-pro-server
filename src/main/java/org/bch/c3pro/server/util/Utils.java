@@ -21,19 +21,15 @@ import java.util.Map;
 public class Utils {
 
     /**
-     * Reads a text file under resource and appends it in a String Buffer
-     * Example textFileToStringBuffer(FileUtils.class, "hello.txt", sb, "\n")
-     * It will read the file "hello.txt" located where FileUtils.class is located
-     * @param cl        The Class
-     * @param fileName  The filename
-     * @param sb        The StringBuffer
-     * @param sep       The line sepparator
-     * @throws Exception
+     * US Abbreviation states
      */
     public static final String [] US_STATES = {"AL","AK","AZ","AR","CA","CO","CT","DE","FL","GA","HI","ID","IL","IN",
             "IA","KS","KY","LA","ME","MD","MA","MI","MN","MS","MO","MT","NE","NV","NH","NJ","NM","NY","NC","ND","OH",
             "OK","OR","PA", "PR", "RI","SC","SD","TN","TX","UT","VT","VI", "VA","WA","WV","WI","WY"};
 
+    /**
+     * US States
+     */
     public static final String [] US_STATES_EXT = {
     "alabama",
     "alaska",
