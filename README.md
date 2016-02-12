@@ -9,7 +9,7 @@ The system servers encrypted POST fhir data through the following method
         "message":{{The encrypted fhir resource}},
         "symmetric_key": {{The encrypted AES symmetric key used to encrypt the message}},
         "key_id": {{The rsa key id used to encrypt the symmetric key}},
-        "version": {{0.5.0 or 1.0.2}}
+        "version": {{0.9.0 or 1.0.2}}
     }
 
 Also, the system serves the following FHIR DSTU2-1.0.2 compliant rest methods (unencrypted data). In this case, the
