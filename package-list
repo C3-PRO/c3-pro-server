@@ -1,0 +1,9 @@
+org.bch.c3pro.server.config
+org.bch.c3pro.server.exception
+org.bch.c3pro.server.external
+org.bch.c3pro.server.iresource
+org.bch.c3pro.server.rest
+org.bch.c3pro.server.servlet
+org.bch.c3pro.server.util
+org.bch.security.oauth
+org.bch.security.oauth.server
