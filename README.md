@@ -3,7 +3,7 @@
 C3-PRO-Server is a highly reliable and scalable FHIR DSTU2-1.0.2 compliant web server, designed to cope with the traffic from mobile apps. The current version can only be deployed in AWS. It populates an AWS SQS with the FHIR resources that are POST. It does not consume the queue. A consumer can be found in the project [c3pro-consumer] (https://bitbucket.org/ipinyol/c3pro-consumer)
 
 The system servers encrypted POST fhir data through the following method
-
+```javascript
     HTTP/1.1 POST /c3pro/fhirenc/*
     {
         "message":{{The encrypted fhir resource}},
@@ -11,30 +11,35 @@ The system servers encrypted POST fhir data through the following method
         "key_id": {{The rsa key id used to encrypt the symmetric key}},
         "version": {{0.9.0 or 1.0.2}}
     }
+```
 
 Also, the system serves the following FHIR DSTU2-1.0.2 compliant rest methods (unencrypted data). In this case, the
 information is encrypted in the server. We discourage the use of these methods in production, even when the
 the traffic goes through https:
 
+```javascript
     HTTP/1.1 GET /c3pro/fhir/Questionnaire/{{questionnaire id}}
     HTTP/1.1 POST /c3pro/fhir/QuestionnaireResponse
     HTTP/1.1 POST /c3pro/fhir/Contract
     HTTP/1.1 POST /c3pro/fhir/Observation
     HTTP/1.1 PUT /c3pro/fhir/Patient/{{patient id}}
-
+```
 It uses oauth2 two legged for authorization, which needs an initial phase for registration:
 
 **Registration request:**
 
+```javascript
     HTTP/1.1 POST /c3pro/register
     HTTP/1.1 Header Antispam: {{in-app-stored secret}}
     {
       “sandbox”: true/false,
       “receipt-data”: {{your apple-supplied app purchase receipt}}
     }
+```
 
 **Registration response:**
 
+```javascript
     HTTP/1.1 201 Created
     Content-Type: application/json
     {
@@ -43,18 +48,19 @@ It uses oauth2 two legged for authorization, which needs an initial phase for re
       "grant_types": ["client_credentials"],
       "token_endpoint_auth_method":"client_secret_basic",
     }
+```
 
 The registration phase should be called only once per device. Once the device is registered, the same client_id and client_secret must be user in future oauth calls.
 
 **Oauth2 authorization request**
-
+```javascript
     HTTP/1.1 POST /c3pro/oauth?grant_type=client_credentials
     Authentication: Basic BASE64(ClientId:Secret)
-
+```
 NOTE: According to [OAuth2 two-legged specifications](https://tools.ietf.org/html/rfc6750) both clientId and Secret should be **x-www-form-urlencoded** before Base64 encoding is applied.
  
 **Oauth2 authorization response**
-
+```javascript
     HTTP/1.1 201 Created
     Content-Type: application/json
     {
@@ -62,7 +68,7 @@ NOTE: According to [OAuth2 two-legged specifications](https://tools.ietf.org/htm
       "expires_in": "{{seconds to expiration}}",
       "token_type": "bearer"
     } 
-
+```
 The Bearer token can be used in the rest calls that serve FHIR resources as authorization credentials.
 
 
@@ -99,8 +105,7 @@ The systems uses an oracle DB to manage credentials and bearer token. Here are t
 * Run the table creation script: *{{src/main/scripts/create_tables.sql}}* in the DB
 * Insert an antispam token:
     
-```
-#!sql
+```sql
 insert into AntiSpamToken (token) values ('{{the_token_hashed_with_sha1}}');
 ```
 
@@ -108,15 +113,13 @@ insert into AntiSpamToken (token) values ('{{the_token_hashed_with_sha1}}');
 
 * Deploy the provided oracle jdbc driver in jBoss:
 
-```
-#!shell
+```shell
 $C3PRO_HOME/cp ojdbc14.jar $JBOSS_HOME/standalone/deployments
 ```
 
 * Configure the data source by editing the file *$JBOSS_HOME/standalone/configuration/standalone.xml*. In the data source section place the following:
 
-```
-#!xml
+```xml
 
 <datasource jndi-name="java:jboss/datasources/c3proAuthDS" pool-name="c3proAuthDS" enabled="true" use-java-context="true">
     <connection-url>{{jdbc_connection_to_db}}</connection-url>
@@ -130,8 +133,7 @@ $C3PRO_HOME/cp ojdbc14.jar $JBOSS_HOME/standalone/deployments
 
 * **Note for production deployments**: It's not recommended to display raw DB credentials in the configuration files, even when the servers are protected. One possible way is to use security domains to wrap encrypted credentials. For instance:
   
-```
-#!xml
+```xml
 
 <datasource jndi-name="java:jboss/datasources/c3proDS" pool-name="c3proDS" enabled="true" use-java-context="true">
     <connection-url>{{jdbc_connection_to_db}}</connection-url>
@@ -144,8 +146,7 @@ $C3PRO_HOME/cp ojdbc14.jar $JBOSS_HOME/standalone/deployments
 
 and in the security domain section:
 
-```
-#!xml
+```xml
 <security-domain name="secure-c3pro-credentials" cache-type="default">
    <authentication>
       <login-module code="org.picketbox.datasource.security.SecureIdentityLoginModule" flag="required">
@@ -166,8 +167,7 @@ The output will be the encrypted password to place in the security domain elemen
 * Configure OAuth2LoginModule by editing the file *$JBOSS_HOME/standalone/configuration/standalone.xml*, and adding the following in the security-domains section:
 
 
-```
-#!xml
+```xml
 
 <security-domain name="StaticUserPwd" cache-type="default">
     <authentication>
